@@ -1,0 +1,30 @@
+name: JustReports
+version: '${project.version}'
+main: me.fortibrine.justreports.JustReports
+api-version: 1.16
+
+commands:
+  reports:
+    description: "Command to view the list of reports"
+    usage: /reports
+  report:
+    description: "Command to send a report"
+    usage: "§7/report [Message]"
+
+permissions:
+  justreports.*:
+    description: "All permissions"
+    default: op
+    children:
+      justreports.report: true
+      justreports.reports: true
+      justreports.reports.answer: true
+  justreports.report:
+    default: true
+    description: "Permission to send a report"
+  justreports.reports:
+    default: op
+    description: "Permission to view the list of reports"
+  justreports.reports.answer:
+    default: op
+    description: "Permission to reply to a report"
