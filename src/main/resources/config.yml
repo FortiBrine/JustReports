@@ -1,0 +1,22 @@
+messages:
+  permission: "§4Error: §fYou do not have permission."
+  you-send: "§cINFO: §7You sent a report."
+  you-already-in-chat: "§4Error: §fYou are already responding to a report."
+  you-already-send-report: "§4Error: §fYou have already sent a report."
+  player-has-admin: "§4Error: §fAnother admin is already responding to this player."
+
+  player-send: "§cINFO: §7%player sent a report: %question."
+
+  admin-close-report: "§cINFO: §7%dmin closed report %player."
+  admin-open-report: "§cINFO: §7%dmin opened a chat with %player."
+
+reports:
+  title: "Reports Menu"
+
+  item:
+    material: NAME_TAG
+    name: "§7%player"
+    lore:
+      - "§7Question: %question"
+      - "§7LMB - take report"
+      - "§7RMB - close report"

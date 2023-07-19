@@ -19,6 +19,7 @@ permissions:
       justreports.report: true
       justreports.reports: true
       justreports.reports.answer: true
+      justreports.see: true
   justreports.report:
     default: true
     description: "Permission to send a report"
@@ -28,3 +29,6 @@ permissions:
   justreports.reports.answer:
     default: op
     description: "Permission to reply to a report"
+  justreports.see:
+    default: op
+    description: "Permission to view admin messages"
