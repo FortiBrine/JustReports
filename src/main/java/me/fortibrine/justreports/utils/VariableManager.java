@@ -16,6 +16,7 @@ public class VariableManager {
     public static void init() {
         questions = new HashMap<>();
         playerAdmin = new HashMap<>();
+        playerItem = new HashMap<>();
     }
 
     public static String getQuestion(Player player) {
@@ -78,4 +79,12 @@ public class VariableManager {
         return playerItem.keySet();
     }
 
+    public static Player getPlayerByAdmin(Player admin) {
+        for (Player player : playerAdmin.keySet()) {
+            if (playerAdmin.get(player).equals(admin)) {
+                return player;
+            }
+        }
+        return null;
+    }
 }

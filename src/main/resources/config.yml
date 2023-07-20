@@ -5,10 +5,15 @@ messages:
   you-already-send-report: "§4Error: §fYou have already sent a report."
   player-has-admin: "§4Error: §fAnother admin is already responding to this player."
 
+  admin: "§1Admin §7%admin§f: %message"
+  player: "§1Player §7%admin§f: %message"
+
   player-send: "§cINFO: §7%player sent a report: %question."
 
-  admin-close-report: "§cINFO: §7%dmin closed report %player."
-  admin-open-report: "§cINFO: §7%dmin opened a chat with %player."
+  admin-close-report: "§cINFO: §7%admin closed report %player."
+  admin-open-report: "§cINFO: §7%admin opened a chat with %player."
+  answer: "Your report is being handled by %admin"
+  close: "Your report was closed by %admin"
 
 reports:
   title: "Reports Menu"

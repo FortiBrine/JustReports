@@ -4,6 +4,7 @@ import me.fortibrine.justreports.commands.CommandReport;
 import me.fortibrine.justreports.commands.CommandReports;
 import me.fortibrine.justreports.listeners.Listener;
 import me.fortibrine.justreports.utils.MessageManager;
+import me.fortibrine.justreports.utils.VariableManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,6 +26,7 @@ public final class JustReports extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new Listener(this), this);
 
         MessageManager.init(this);
-    }
+        VariableManager.init();
+;    }
 
 }

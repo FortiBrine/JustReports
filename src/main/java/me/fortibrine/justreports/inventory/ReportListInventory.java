@@ -51,6 +51,12 @@ public class ReportListInventory implements InventoryHolder {
         }
 
         if (event.getClick() == ClickType.LEFT) {
+            if (VariableManager.getAdmin(player) != null && VariableManager.getAdmin(player).equals(admin)) {
+                admin.sendMessage(MessageManager.getStringFromConfig("messages.player-has-admin"));
+
+                return;
+            }
+
             VariableManager.setAdmin(player, admin);
 
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
@@ -61,12 +67,14 @@ public class ReportListInventory implements InventoryHolder {
                         .replace("%admin", admin.getName())
                         .replace("%question", VariableManager.getQuestion(player)));
             }
+
+            player.sendMessage(MessageManager.getStringFromConfig("messages.answer")
+                    .replace("%player", player.getName())
+                    .replace("%admin", admin.getName())
+                    .replace("%question", VariableManager.getQuestion(player)));
+
         }
         if (event.getClick() == ClickType.RIGHT) {
-            VariableManager.removeQuestion(player);
-            VariableManager.removeAdmin(player);
-            VariableManager.removeItem(player);
-
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 if (!onlinePlayer.hasPermission("justreports.see")) continue;
 
@@ -75,6 +83,15 @@ public class ReportListInventory implements InventoryHolder {
                         .replace("%admin", admin.getName())
                         .replace("%question", VariableManager.getQuestion(player)));
             }
+
+            player.sendMessage(MessageManager.getStringFromConfig("messages.close")
+                    .replace("%player", player.getName())
+                    .replace("%admin", admin.getName())
+                    .replace("%question", VariableManager.getQuestion(player)));
+
+            VariableManager.removeQuestion(player);
+            VariableManager.removeAdmin(player);
+            VariableManager.removeItem(player);
 
         }
 
