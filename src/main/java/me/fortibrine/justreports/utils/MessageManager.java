@@ -6,6 +6,7 @@ import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +22,13 @@ public class MessageManager {
 
     public static String getStringFromConfig(String path) {
         return supportMessagesJSON(supportColorsHEX(config.getString(path))).replace("&", "§");
+    }
+
+    public static List<String> getStringListFromConfig(String path) {
+        List<String> stringList = config.getStringList(path);
+
+        stringList.replaceAll(s -> supportMessagesJSON(supportColorsHEX(s)).replace("&", "§"));
+        return stringList;
     }
 
     public static String supportColorsHEX(String nameMessage) {

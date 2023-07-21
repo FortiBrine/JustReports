@@ -75,6 +75,7 @@ public class ReportListInventory implements InventoryHolder {
 
         }
         if (event.getClick() == ClickType.RIGHT) {
+
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 if (!onlinePlayer.hasPermission("justreports.see")) continue;
 
@@ -90,7 +91,15 @@ public class ReportListInventory implements InventoryHolder {
                     .replace("%question", VariableManager.getQuestion(player)));
 
             VariableManager.removeQuestion(player);
-            VariableManager.removeAdmin(player);
+
+            if (VariableManager.getAdmin(player) != null && VariableManager.getAdmin(player).equals(admin)) {
+                RateInventory rateInventory = new RateInventory();
+                player.closeInventory();
+                player.openInventory(rateInventory.getInventory());
+            } else {
+                VariableManager.removeAdmin(player);
+            }
+
             VariableManager.removeItem(player);
 
         }

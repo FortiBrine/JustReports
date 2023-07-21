@@ -9,12 +9,36 @@ messages:
   player: "§1Player §7%admin§f: %message"
 
   player-send: "§cINFO: §7%player sent a report: %question."
+  player-leave: "§cINFO: §7%player left the server and their report was removed."
 
   admin-close-report: "§cINFO: §7%admin closed report %player."
   admin-open-report: "§cINFO: §7%admin opened a chat with %player."
   answer: "Your report is being handled by %admin"
   close: "Your report was closed by %admin"
 
+rate:
+  title: "Admin Rating"
+
+  1:
+    material: GRAY_TERRACOTTA
+    name: "1 star"
+    lore: []
+  2:
+    material: GRAY_TERRACOTTA
+    name: "2 stars"
+    lore: []
+  3:
+    material: GRAY_TERRACOTTA
+    name: "3 stars"
+    lore: []
+  4:
+    material: GRAY_TERRACOTTA
+    name: "4 stars"
+    lore: []
+  5:
+    material: GRAY_TERRACOTTA
+    name: "5 stars"
+    lore: []
 reports:
   title: "Reports Menu"
 
