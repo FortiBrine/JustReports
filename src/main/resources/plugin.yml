@@ -10,6 +10,9 @@ commands:
   report:
     description: "Command to send a report"
     usage: "§7/report [Message]"
+  reputation:
+    description: "Command to view reputation"
+    usage: "§7/reputation [Nickname]"
 
 permissions:
   justreports.*:
@@ -32,3 +35,9 @@ permissions:
   justreports.see:
     default: op
     description: "Permission to view admin messages"
+  justreports.reputation:
+    default: op
+    description: "View your own reputation"
+  justreports.reputation.other:
+    default: op
+    description: "View other players' reputation"

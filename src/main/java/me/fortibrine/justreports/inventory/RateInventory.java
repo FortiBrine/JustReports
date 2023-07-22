@@ -68,26 +68,38 @@ public class RateInventory implements InventoryHolder {
 
         event.setCancelled(true);
 
+        Player admin = VariableManager.getAdmin(player);
+
         switch (event.getSlot()) {
             case 11:
                 ReputationManager.upReputation(VariableManager.getAdmin(player), 1);
                 player.closeInventory();
+                admin.sendMessage(MessageManager.getStringFromConfig("messages.rate").replace("%player", player.getName()).replace("%stars", "1"));
+
                 break;
             case 12:
                 ReputationManager.upReputation(VariableManager.getAdmin(player), 2);
                 player.closeInventory();
+                admin.sendMessage(MessageManager.getStringFromConfig("messages.rate").replace("%player", player.getName()).replace("%stars", "2"));
+
                 break;
             case 13:
                 ReputationManager.upReputation(VariableManager.getAdmin(player), 3);
                 player.closeInventory();
+                admin.sendMessage(MessageManager.getStringFromConfig("messages.rate").replace("%player", player.getName()).replace("%stars", "3"));
+
                 break;
             case 14:
                 ReputationManager.upReputation(VariableManager.getAdmin(player), 4);
                 player.closeInventory();
+                admin.sendMessage(MessageManager.getStringFromConfig("messages.rate").replace("%player", player.getName()).replace("%stars", "4"));
+
                 break;
             case 15:
                 ReputationManager.upReputation(VariableManager.getAdmin(player), 5);
                 player.closeInventory();
+                admin.sendMessage(MessageManager.getStringFromConfig("messages.rate").replace("%player", player.getName()).replace("%stars", "5"));
+
                 break;
         }
     }

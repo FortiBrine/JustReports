@@ -104,7 +104,6 @@ public class Listener implements org.bukkit.event.Listener {
     public void onClose(InventoryCloseEvent event) {
         Inventory inventory = event.getInventory();
 
-        if (inventory == null) return;
         if (inventory.getHolder() == null) return;
 
         InventoryHolder inventoryHolder = inventory.getHolder();

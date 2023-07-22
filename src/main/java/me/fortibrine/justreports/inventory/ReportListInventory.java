@@ -40,17 +40,24 @@ public class ReportListInventory implements InventoryHolder {
 
         if (player == null) return;
 
-        if (!admin.hasPermission("justreports.reports.answer")) {
-            admin.sendMessage(MessageManager.getStringFromConfig("messages.permission"));
-            return;
-        }
-
         if (VariableManager.containsAdmin(player) && !VariableManager.getAdmin(player).equals(admin)) {
             admin.sendMessage(MessageManager.getStringFromConfig("messages.player-has-admin"));
             return;
         }
 
         if (event.getClick() == ClickType.LEFT) {
+
+            if (!admin.hasPermission("justreports.reports.answer")) {
+                admin.sendMessage(MessageManager.getStringFromConfig("messages.permission"));
+                return;
+            }
+
+            if (player.equals(admin)) {
+                admin.sendMessage(MessageManager.getStringFromConfig("messages.you-cant-answer-on-your-report"));
+
+                return;
+            }
+
             if (VariableManager.getAdmin(player) != null && VariableManager.getAdmin(player).equals(admin)) {
                 admin.sendMessage(MessageManager.getStringFromConfig("messages.player-has-admin"));
 
@@ -75,6 +82,11 @@ public class ReportListInventory implements InventoryHolder {
 
         }
         if (event.getClick() == ClickType.RIGHT) {
+
+            if (!admin.hasPermission("justreports.reports.answer")) {
+                admin.sendMessage(MessageManager.getStringFromConfig("messages.permission"));
+                return;
+            }
 
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 if (!onlinePlayer.hasPermission("justreports.see")) continue;

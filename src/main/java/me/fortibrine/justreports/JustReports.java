@@ -2,6 +2,7 @@ package me.fortibrine.justreports;
 
 import me.fortibrine.justreports.commands.CommandReport;
 import me.fortibrine.justreports.commands.CommandReports;
+import me.fortibrine.justreports.commands.CommandReputation;
 import me.fortibrine.justreports.listeners.Listener;
 import me.fortibrine.justreports.utils.MessageManager;
 import me.fortibrine.justreports.utils.ReputationManager;
@@ -23,6 +24,7 @@ public final class JustReports extends JavaPlugin {
 
         this.getCommand("report").setExecutor(new CommandReport(this));
         this.getCommand("reports").setExecutor(new CommandReports(this));
+        this.getCommand("reputation").setExecutor(new CommandReputation());
 
         Bukkit.getPluginManager().registerEvents(new Listener(this), this);
 
