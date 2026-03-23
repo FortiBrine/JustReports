@@ -1,11 +1,13 @@
 [versions]
 shadow = "9.0.2"
-paper = "1.16.5-R0.1-SNAPSHOT"
+paper = "1.13.2-R0.1-SNAPSHOT"
 lombok = "1.18.38"
+litecommands = "3.10.2"
 
 [libraries]
 paper = { module = "com.destroystokyo.paper:paper-api", version.ref = "paper" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+litecommands = { module = "dev.rollczi:litecommands-bukkit", version.ref = "litecommands" }
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }

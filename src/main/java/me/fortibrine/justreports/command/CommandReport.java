@@ -1,50 +1,36 @@
-package me.fortibrine.justreports.commands;
+package me.fortibrine.justreports.command;
 
-import me.fortibrine.justreports.JustReports;
+import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.annotations.context.Context;
+import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.annotations.join.Join;
+import dev.rollczi.litecommands.annotations.permission.Permission;
+import lombok.RequiredArgsConstructor;
 import me.fortibrine.justreports.utils.MessageManager;
 import me.fortibrine.justreports.utils.VariableManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
-public class CommandReport implements CommandExecutor {
+@RequiredArgsConstructor
+@Command(name = "report")
+@Permission("justreports.report")
+public class CommandReport {
 
-    private JustReports plugin;
-    public CommandReport(JustReports plugin) {
-        this.plugin = plugin;
-    }
+    private final Plugin plugin;
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            return true;
-        }
-
-        if (args.length < 1) {
-            return false;
-        }
-
-        Player player = (Player) sender;
-
-        if (!player.hasPermission("justreports.report")) {
-            player.sendMessage(MessageManager.getStringFromConfig("messages.permission"));
-            return true;
-        }
-
+    @Execute
+    public void execute(@Context Player player, @Join String question) {
         if (VariableManager.containsQuestion(player)) {
             player.sendMessage(MessageManager.getStringFromConfig("messages.you-already-send-report"));
 
-            return true;
+            return;
         }
-
-        String question = String.join(" ", args);
 
         ItemStack item = new ItemStack(Material.matchMaterial(MessageManager.getStringFromConfig("reports.item.material")));
 
@@ -70,8 +56,7 @@ public class CommandReport implements CommandExecutor {
                     .replace("%player", player.getName())
                     .replace("%question", question));
         }
-
-        return true;
     }
+
 
 }

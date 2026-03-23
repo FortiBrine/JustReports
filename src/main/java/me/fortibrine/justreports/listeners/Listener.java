@@ -1,6 +1,6 @@
 package me.fortibrine.justreports.listeners;
 
-import me.fortibrine.justreports.JustReports;
+import me.fortibrine.justreports.JustReportsPlugin;
 import me.fortibrine.justreports.inventory.RateInventory;
 import me.fortibrine.justreports.inventory.ReportListInventory;
 import me.fortibrine.justreports.utils.MessageManager;
@@ -17,8 +17,8 @@ import org.bukkit.inventory.InventoryHolder;
 
 public class Listener implements org.bukkit.event.Listener {
 
-    private JustReports plugin;
-    public Listener(JustReports plugin) {
+    private JustReportsPlugin plugin;
+    public Listener(JustReportsPlugin plugin) {
         this.plugin = plugin;
     }
 

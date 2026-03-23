@@ -1,15 +1,14 @@
 package me.fortibrine.justreports.utils;
 
-import me.fortibrine.justreports.JustReports;
+import me.fortibrine.justreports.JustReportsPlugin;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ReputationManager {
 
-    private static JustReports plugin;
-    public static void init(JustReports plugin) {
+    private static JustReportsPlugin plugin;
+    public static void init(JustReportsPlugin plugin) {
         ReputationManager.plugin = plugin;
     }
 
@@ -25,13 +24,7 @@ public class ReputationManager {
     }
 
     public static double getReputation(Player player) {
-        List<Integer> listOfReputations = plugin.getConfig().getIntegerList("player." + player.getName());
-
-        if (listOfReputations.isEmpty()) {
-            return 0;
-        }
-
-        return 1.0 * listOfReputations.stream().reduce(0, Integer::sum) / listOfReputations.size();
+        return getReputationByName(player.getName());
     }
 
     public static double getReputationByName(String playerName) {

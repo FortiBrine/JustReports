@@ -1,6 +1,6 @@
 package me.fortibrine.justreports.utils;
 
-import me.fortibrine.justreports.JustReports;
+import me.fortibrine.justreports.JustReportsPlugin;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
@@ -16,7 +16,7 @@ public class MessageManager {
 
     private static FileConfiguration config;
 
-    public static void init(JustReports plugin) {
+    public static void init(JustReportsPlugin plugin) {
         MessageManager.config = plugin.getConfig();
     }
 

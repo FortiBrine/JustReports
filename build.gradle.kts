@@ -11,21 +11,34 @@ repositories {
     mavenCentral()
 
     maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://repo.panda-lang.org/releases")
 }
 
 dependencies {
-    compileOnly(libs.paper)
+    compileOnly(libs.paper) {
+        exclude("commons-lang", "commons-lang")
+        exclude("com.google.guava", "guava")
+        exclude("com.google.code.gson", "gson")
+        exclude("org.yaml", "snakeyaml")
+        exclude("junit", "junit")
+    }
+
+    implementation(libs.litecommands)
 
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}
+
 tasks {
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-
-        sourceCompatibility = "1.8"
-        targetCompatibility = "1.8"
+        options.compilerArgs.add("-parameters")
     }
 
     shadowJar {
