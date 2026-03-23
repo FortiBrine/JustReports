@@ -1,18 +1,7 @@
 name: JustReports
 version: '${version}'
-main: me.fortibrine.justreports.JustReports
+main: me.fortibrine.justreports.JustReportsPlugin
 api-version: 1.16
-
-commands:
-  reports:
-    description: "Command to view the list of reports"
-    usage: /reports
-  report:
-    description: "Command to send a report"
-    usage: "§7/report [Message]"
-  reputation:
-    description: "Command to view reputation"
-    usage: "§7/reputation [Nickname]"
 
 permissions:
   justreports.*:

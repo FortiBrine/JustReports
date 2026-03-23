@@ -17,13 +17,17 @@ repositories {
 dependencies {
     compileOnly(libs.paper) {
         exclude("commons-lang", "commons-lang")
-        exclude("com.google.guava", "guava")
-        exclude("com.google.code.gson", "gson")
         exclude("org.yaml", "snakeyaml")
         exclude("junit", "junit")
     }
 
-    implementation(libs.litecommands)
+    compileOnly(libs.sqlite)
+
+    implementation(libs.litecommands) {
+        exclude("org.jetbrains", "annotations")
+    }
+    implementation(libs.configurate)
+    implementation(libs.ormlite)
 
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
@@ -43,6 +47,12 @@ tasks {
 
     shadowJar {
         archiveClassifier.set("")
+
+        relocate("org.spongepowered.configurate", "${rootProject.group}.${rootProject.name.lowercase()}.shade.configurate")
+        relocate("dev.rollczi.litecommands", "${rootProject.group}.${rootProject.name.lowercase()}.shade.litecommands")
+        relocate("com.j256.ormlite", "${rootProject.group}.${rootProject.name.lowercase()}.shade.ormlite")
+        relocate("io.leangen.geantyref", "${rootProject.group}.${rootProject.name.lowercase()}.shade.geantyref")
+        relocate("net.kyori", "${rootProject.group}.${rootProject.name.lowercase()}.shade.kyori")
     }
 
     processResources {

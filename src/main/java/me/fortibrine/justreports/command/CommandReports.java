@@ -5,7 +5,6 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import lombok.RequiredArgsConstructor;
-import me.fortibrine.justreports.inventory.ReportListInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -18,9 +17,7 @@ public class CommandReports {
 
     @Execute
     public void execute(@Context Player player) {
-        ReportListInventory reportListInventory = new ReportListInventory();
 
-        player.openInventory(reportListInventory.getInventory());
     }
 
 }

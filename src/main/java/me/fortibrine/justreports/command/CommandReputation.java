@@ -1,47 +1,54 @@
 package me.fortibrine.justreports.command;
 
+import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import lombok.RequiredArgsConstructor;
-import me.fortibrine.justreports.utils.MessageManager;
-import me.fortibrine.justreports.utils.ReputationManager;
+import me.fortibrine.justreports.config.ConfigManager;
+import me.fortibrine.justreports.reputation.ReputationService;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Command(name = "reputation")
 @Permission("justreports.reputation")
 public class CommandReputation {
 
-    private final Plugin plugin;
+    private final ReputationService reputationService;
+    private final ConfigManager configManager;
 
     @Execute
-    public void execute(@Context CommandSender sender) {
-        double reputation = ReputationManager.getReputationByName(sender.getName());
-
-        String reputationString = String.format("%.2f", reputation);
-
-        String message = MessageManager.getStringFromConfig("messages.your-reputation");
-
-        message = message.replace("%player", sender.getName()).replace("%reputation", reputationString);
-
+    public void execute(@Context Player sender) {
+        double reputation = reputationService.getReputation(sender);
+        String message = configManager.getMessageConfig().getCurrentReputation()
+                .replace("%reputation%", String.format("%.2f", reputation));
         sender.sendMessage(message);
     }
 
     @Execute
     @Permission("justreports.reputation.other")
-    public void execute(@Context CommandSender sender, String target) {
-        double reputation = ReputationManager.getReputationByName(target);
+    public void execute(@Context CommandSender sender, @Arg String target) {
+        OfflinePlayer targetPlayer = sender.getServer().getOfflinePlayer(target);
+        UUID targetUUID = targetPlayer.getUniqueId();
 
-        String reputationString = String.format("%.2f", reputation);
+        if (targetPlayer.getName() == null) {
+            String message = configManager.getMessageConfig().getPlayerNotFound()
+                    .replace("%player%", target);
+            sender.sendMessage(message);
+            return;
+        }
 
-        String message = MessageManager.getStringFromConfig("messages.other-reputation");
-
-        message = message.replace("%player", target).replace("%reputation", reputationString);
-
+        double reputation = reputationService.getReputationByUniqueId(targetUUID);
+        String message = configManager.getMessageConfig().getOtherPlayerReputation()
+                .replace("%player%", targetPlayer.getName())
+                .replace("%reputation%", String.format("%.2f", reputation));
         sender.sendMessage(message);
+
     }
 
 }
