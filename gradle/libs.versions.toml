@@ -1,0 +1,11 @@
+[versions]
+shadow = "9.0.2"
+paper = "1.16.5-R0.1-SNAPSHOT"
+lombok = "1.18.38"
+
+[libraries]
+paper = { module = "com.destroystokyo.paper:paper-api", version.ref = "paper" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+
+[plugins]
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }

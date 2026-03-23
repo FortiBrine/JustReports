@@ -1,5 +1,5 @@
 name: JustReports
-version: '${project.version}'
+version: '${version}'
 main: me.fortibrine.justreports.JustReports
 api-version: 1.16
 
