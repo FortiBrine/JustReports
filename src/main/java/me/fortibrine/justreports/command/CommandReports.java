@@ -5,6 +5,7 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import lombok.RequiredArgsConstructor;
+import me.fortibrine.justreports.config.ConfigManager;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -13,7 +14,7 @@ import org.bukkit.plugin.Plugin;
 @Permission("justreports.reports")
 public class CommandReports {
 
-    private final Plugin plugin;
+    private final ConfigManager configManager;
 
     @Execute
     public void execute(@Context Player player) {

@@ -6,6 +6,7 @@ litecommands = "3.10.2"
 sqlite = "3.50.3.0"
 ormlite = "6.1"
 configurate = "4.2.0"
+invui = "1.49"
 
 [libraries]
 paper = { module = "com.destroystokyo.paper:paper-api", version.ref = "paper" }
@@ -14,6 +15,7 @@ litecommands = { module = "dev.rollczi:litecommands-bukkit", version.ref = "lite
 sqlite = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite" }
 ormlite = { module = "com.j256.ormlite:ormlite-jdbc", version.ref = "ormlite" }
 configurate = { module = "org.spongepowered:configurate-yaml", version.ref = "configurate" }
+invui = { module = "xyz.xenondevs.invui:invui", version.ref = "invui" }
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }

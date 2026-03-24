@@ -28,6 +28,9 @@ dependencies {
     }
     implementation(libs.configurate)
     implementation(libs.ormlite)
+    implementation(fileTree("libs") {
+        include("*.jar")
+    })
 
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
@@ -53,6 +56,7 @@ tasks {
         relocate("com.j256.ormlite", "${rootProject.group}.${rootProject.name.lowercase()}.shade.ormlite")
         relocate("io.leangen.geantyref", "${rootProject.group}.${rootProject.name.lowercase()}.shade.geantyref")
         relocate("net.kyori", "${rootProject.group}.${rootProject.name.lowercase()}.shade.kyori")
+        relocate("ru.boomearo.menuinv", "${rootProject.group}.${rootProject.name.lowercase()}.shade.menuinv")
     }
 
     processResources {

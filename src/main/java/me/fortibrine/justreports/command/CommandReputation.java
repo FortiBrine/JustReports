@@ -1,6 +1,7 @@
 package me.fortibrine.justreports.command;
 
 import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.async.Async;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -22,6 +23,7 @@ public class CommandReputation {
     private final ReputationService reputationService;
     private final ConfigManager configManager;
 
+    @Async
     @Execute
     public void execute(@Context Player sender) {
         double reputation = reputationService.getReputation(sender);
@@ -30,6 +32,7 @@ public class CommandReputation {
         sender.sendMessage(message);
     }
 
+    @Async
     @Execute
     @Permission("justreports.reputation.other")
     public void execute(@Context CommandSender sender, @Arg String target) {

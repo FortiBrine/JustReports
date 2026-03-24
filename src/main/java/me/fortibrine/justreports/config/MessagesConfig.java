@@ -40,6 +40,18 @@ public class MessagesConfig {
         private String reportTakenByOtherAdmin = "%admin% has taken the report from %player%.";
     }
 
+    @Comment("The usage messages for the commands.")
+    @Setting("usage")
+    private UsageMessagesSection usageMessagesSection = new UsageMessagesSection();
+
+    @Getter
+    @ConfigSerializable
+    public static class UsageMessagesSection {
+        private String reportUsage = "Usage: /report <question>";
+        private String reportsUsage = "Usage: /reports";
+        private String reputationUsage = "Usage: /reputation [player]";
+    }
+
     private String receivedReputation = "You have received %stars% stars from %player%. Your current reputation is %reputation% stars.";
     private String currentReputation = "Your current reputation is %reputation% stars.";
     private String otherPlayerReputation = "%player%'s current reputation is %reputation% stars.";

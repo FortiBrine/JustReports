@@ -1,6 +1,7 @@
 package me.fortibrine.justreports.config;
 
 import lombok.Getter;
+import me.fortibrine.justreports.gui.ReportListMenu;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
 import org.spongepowered.configurate.yaml.NodeStyle;
@@ -17,15 +18,22 @@ public class ConfigManager {
     private final File messageConfigFile;
     private final ConfigurationLoader<?> messageConfigLoader;
 
+    private final File reportListMenuConfigFile;
+    private final ConfigurationLoader<?> reportListMenuConfigLoader;
+
     @Getter
     private MainConfig mainConfig;
 
     @Getter
     private MessagesConfig messageConfig;
 
+    @Getter
+    private ReportListMenu.Config reportListMenuConfig;
+
     public ConfigManager(File dataFolder) throws IOException {
         mainConfigFile = new File(dataFolder, "config.yml");
         messageConfigFile = new File(dataFolder, "messages.yml");
+        reportListMenuConfigFile = new File(dataFolder, "report_list_menu.yml");
 
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
@@ -38,6 +46,11 @@ public class ConfigManager {
 
         messageConfigLoader = YamlConfigurationLoader.builder()
                 .path(messageConfigFile.toPath())
+                .nodeStyle(NodeStyle.BLOCK)
+                .build();
+
+        reportListMenuConfigLoader = YamlConfigurationLoader.builder()
+                .path(reportListMenuConfigFile.toPath())
                 .nodeStyle(NodeStyle.BLOCK)
                 .build();
     }
@@ -59,6 +72,14 @@ public class ConfigManager {
         if (!mainConfigFile.exists()) {
             mainConfigRoot.set(MainConfig.class, mainConfig);
             mainConfigLoader.save(mainConfigRoot);
+        }
+
+        // report_list_menu.yml
+        ConfigurationNode reportListMenuConfigRoot = reportListMenuConfigLoader.load();
+        reportListMenuConfig = reportListMenuConfigRoot.get(ReportListMenu.Config.class, new ReportListMenu.Config());
+        if (!reportListMenuConfigFile.exists()) {
+            reportListMenuConfigRoot.set(ReportListMenu.Config.class, reportListMenuConfig);
+            reportListMenuConfigLoader.save(reportListMenuConfigRoot);
         }
 
     }
