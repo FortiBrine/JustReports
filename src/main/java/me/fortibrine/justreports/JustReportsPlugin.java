@@ -5,7 +5,6 @@ import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
-import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import lombok.Getter;
 import me.fortibrine.justreports.command.CommandReport;
 import me.fortibrine.justreports.command.CommandReports;
@@ -14,6 +13,7 @@ import me.fortibrine.justreports.command.error.InvalidUsageHandlerImpl;
 import me.fortibrine.justreports.command.error.PermissionHandler;
 import me.fortibrine.justreports.config.ConfigManager;
 import me.fortibrine.justreports.config.MainConfig;
+import me.fortibrine.justreports.dialog.DialogService;
 import me.fortibrine.justreports.gui.ReportListMenu;
 import me.fortibrine.justreports.question.QuestionService;
 import me.fortibrine.justreports.question.QuestionServiceImpl;
@@ -37,6 +37,7 @@ public final class JustReportsPlugin extends JavaPlugin {
 
     private QuestionService questionService;
     private ReputationService reputationService;
+    private DialogService dialogService;
 
     @Override
     public void onLoad() {
@@ -75,13 +76,24 @@ public final class JustReportsPlugin extends JavaPlugin {
             return;
         }
 
+        dialogService = new DialogService(this, configManager);
+
     }
 
     @Override
     public void onEnable() {
         Menu.initMenu(this);
         
-        new ReportListMenu(questionService, reputationService, this, configManager.getReportListMenuConfig());
+        new ReportListMenu(
+                questionService,
+                reputationService,
+                this,
+                configManager.getReportListMenuConfig(),
+                dialogService,
+                configManager
+        ).registerMenu();
+
+        getServer().getPluginManager().registerEvents(dialogService, this);
 
         this.liteCommands = LiteBukkitFactory.builder(getDescription().getName().toLowerCase())
                 .commands(
@@ -99,6 +111,7 @@ public final class JustReportsPlugin extends JavaPlugin {
     public void onDisable() {
         instance = null;
 
+        dialogService = null;
         configManager = null;
         questionService = null;
         reputationService = null;

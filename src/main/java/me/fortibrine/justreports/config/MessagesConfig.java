@@ -10,11 +10,10 @@ import org.spongepowered.configurate.objectmapping.meta.Setting;
 public class MessagesConfig {
     private String reportSent = "Your report has been sent to the admins.";
     private String permissionDenied = "You don't have permission to use this command.";
-    private String alreadyInChat = "You are already in the chat with an admin.";
-    private String alreadySentReport = "You have already sent a report. Please wait for an admin to respond.";
-    private String alreadyHasAdmin = "An admin is already responding to your report. You cannot take the report.";
+    private String alreadySentReport = "You have already sent a report.";
     private String cannotTakeOwnReport = "You cannot take your own report.";
     private String reportTakenByAdmin = "Your report has been taken by %admin%. Please wait for them to respond.";
+    private String cannotStartDialogAlreadyInDialog = "Cannot start dialog: you or this player is already in another dialog.";
 
     @Comment("The format for messages in the admin-player chat. Use %admin% for the admin's name, %player% for the player's name, and %message% for the message content.")
     @Setting("chat")
@@ -23,7 +22,7 @@ public class MessagesConfig {
     @Getter
     @ConfigSerializable
     public static class ChatSection {
-        private String adminMessageFormat = "[Admin] %admin%: %message%";
+        private String adminMessageFormat = "[Admin] %player%: %message%";
         private String playerMessageFormat = "[Player] %player%: %message%";
     }
 

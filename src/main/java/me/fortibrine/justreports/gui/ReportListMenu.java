@@ -2,10 +2,13 @@ package me.fortibrine.justreports.gui;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.fortibrine.justreports.config.ConfigManager;
+import me.fortibrine.justreports.dialog.DialogService;
 import me.fortibrine.justreports.question.QuestionService;
 import me.fortibrine.justreports.reputation.ReputationService;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -27,6 +30,8 @@ public class ReportListMenu {
     private final ReputationService reputationService;
     private final Plugin plugin;
     private final Config config;
+    private final DialogService dialogService;
+    private final ConfigManager configManager;
 
     public void registerMenu() {
         Menu.registerPages(plugin)
@@ -46,29 +51,50 @@ public class ReportListMenu {
                             List<IconHandler> icons = new ArrayList<>();
 
                             for (Player playerWithQuestion : questionService.getPlayersWithQuestions()) {
-                                icons.add(new IconBuilder()
-                                        .setIconClick((inventoryPage1, itemIcon, player1, clickType) -> {
-
-                                        })
-                                        .setIconUpdate((inventoryPage1, player1) -> {
-                                            ItemStack item = new ItemStack(config.getItemSection().getMaterial());
-                                            String name = config.getItemSection().getName()
-                                                    .replace("%player%", playerWithQuestion.getName());
-                                            List<String> lore = new ArrayList<>();
-                                            for (String line : config.getItemSection().getLore()) {
-                                                lore.add(line.replace("%player%", playerWithQuestion.getName()));
-                                            }
-                                            item.getItemMeta().setDisplayName(name);
-                                            item.getItemMeta().setLore(lore);
-                                            item.setItemMeta(item.getItemMeta());
-                                            return item;
-                                        })
-                                        .build()
-                                        .create());
+                                icons.add(buildReportIcon(playerWithQuestion));
                             }
 
                             return icons;
                         }));
+    }
+
+    public IconHandler buildReportIcon(Player targetPlayer) {
+        IconBuilder iconBuilder = new IconBuilder();
+
+        iconBuilder.setIconClick((inventoryPage, itemIcon, adminPlayer, clickType) -> {
+            if (clickType == ClickType.LEFT) {
+                if (dialogService.isInDialog(adminPlayer.getUniqueId()) || dialogService.isInDialog(targetPlayer.getUniqueId())) {
+                    adminPlayer.sendMessage(configManager.getMessageConfig().getCannotStartDialogAlreadyInDialog());
+                    return;
+                }
+
+                if (!adminPlayer.hasPermission("justreports.reports.answer")) {
+                    adminPlayer.sendMessage(configManager.getMessageConfig().getPermissionDenied());
+                    inventoryPage.close();
+                    return;
+                }
+
+                dialogService.beginDialog(adminPlayer.getUniqueId(), targetPlayer.getUniqueId());
+            } else if (clickType == ClickType.RIGHT) {
+                dialogService.endDialog(adminPlayer.getUniqueId());
+            }
+        });
+
+        iconBuilder.setIconUpdate((inventoryPage, player) -> {
+            ItemStack item = new ItemStack(config.getItemSection().getMaterial());
+            String name = config.getItemSection().getName()
+                    .replace("%player%", targetPlayer.getName());
+            List<String> lore = new ArrayList<>();
+            for (String line : config.getItemSection().getLore()) {
+                lore.add(line.replace("%player%", targetPlayer.getName()));
+            }
+            item.getItemMeta().setDisplayName(name);
+            item.getItemMeta().setLore(lore);
+            item.setItemMeta(item.getItemMeta());
+            return item;
+        });
+
+        return iconBuilder.build().create();
     }
 
     @Getter

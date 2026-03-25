@@ -33,25 +33,26 @@ public class ConfigManager {
     public ConfigManager(File dataFolder) throws IOException {
         mainConfigFile = new File(dataFolder, "config.yml");
         messageConfigFile = new File(dataFolder, "messages.yml");
-        reportListMenuConfigFile = new File(dataFolder, "report_list_menu.yml");
+        reportListMenuConfigFile = new File(dataFolder, "menu/report_list.yml");
 
-        if (!dataFolder.exists()) {
-            dataFolder.mkdirs();
-        }
+        final int indent = 2;
 
         mainConfigLoader = YamlConfigurationLoader.builder()
                 .path(mainConfigFile.toPath())
                 .nodeStyle(NodeStyle.BLOCK)
+                .indent(indent)
                 .build();
 
         messageConfigLoader = YamlConfigurationLoader.builder()
                 .path(messageConfigFile.toPath())
                 .nodeStyle(NodeStyle.BLOCK)
+                .indent(indent)
                 .build();
 
         reportListMenuConfigLoader = YamlConfigurationLoader.builder()
                 .path(reportListMenuConfigFile.toPath())
                 .nodeStyle(NodeStyle.BLOCK)
+                .indent(indent)
                 .build();
     }
 
@@ -74,7 +75,7 @@ public class ConfigManager {
             mainConfigLoader.save(mainConfigRoot);
         }
 
-        // report_list_menu.yml
+        // menu/report_list.yml
         ConfigurationNode reportListMenuConfigRoot = reportListMenuConfigLoader.load();
         reportListMenuConfig = reportListMenuConfigRoot.get(ReportListMenu.Config.class, new ReportListMenu.Config());
         if (!reportListMenuConfigFile.exists()) {
