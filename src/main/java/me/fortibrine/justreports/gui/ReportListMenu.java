@@ -62,7 +62,9 @@ public class ReportListMenu {
         IconBuilder iconBuilder = new IconBuilder();
 
         iconBuilder.setIconClick((inventoryPage, itemIcon, adminPlayer, clickType) -> {
-            if (clickType == ClickType.LEFT) {
+            if (clickType == ClickType.RIGHT || targetPlayer == null || !targetPlayer.isOnline()) {
+                dialogService.endDialog(adminPlayer.getUniqueId());
+            } else if (clickType == ClickType.LEFT) {
                 if (dialogService.isInDialog(adminPlayer.getUniqueId()) || dialogService.isInDialog(targetPlayer.getUniqueId())) {
                     adminPlayer.sendMessage(configManager.getMessageConfig().getCannotStartDialogAlreadyInDialog());
                     return;
@@ -74,9 +76,13 @@ public class ReportListMenu {
                     return;
                 }
 
+                targetPlayer.sendMessage(configManager.getMessageConfig().getReportTakenByAdmin()
+                        .replace("%admin%", adminPlayer.getName()));
+
+                adminPlayer.sendMessage(configManager.getMessageConfig().getAdminMessagesSection().getReportTaken()
+                        .replace("%player%", targetPlayer.getName()));
+
                 dialogService.beginDialog(adminPlayer.getUniqueId(), targetPlayer.getUniqueId());
-            } else if (clickType == ClickType.RIGHT) {
-                dialogService.endDialog(adminPlayer.getUniqueId());
             }
         });
 

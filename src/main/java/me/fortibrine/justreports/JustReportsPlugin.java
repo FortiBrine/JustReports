@@ -98,7 +98,7 @@ public final class JustReportsPlugin extends JavaPlugin {
         this.liteCommands = LiteBukkitFactory.builder(getDescription().getName().toLowerCase())
                 .commands(
                     new CommandReport(questionService, configManager),
-                    new CommandReports(configManager),
+                    new CommandReports(),
                     new CommandReputation(reputationService, configManager)
                 )
                 .invalidUsage(new InvalidUsageHandlerImpl(configManager))

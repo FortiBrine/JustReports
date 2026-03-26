@@ -11,7 +11,7 @@ import ru.boomearo.menuinv.api.PluginPage;
 public enum MenuPage implements PluginPage {
 
     REPORT_LIST(JustReportsPlugin.getInstance(), "report_list"),
-    REPUTATION(JustReportsPlugin.getInstance(), "reputation");
+    FEEDBACK_RATING(JustReportsPlugin.getInstance(), "feedback_rating");
 
     private final Plugin plugin;
     private final String page;
