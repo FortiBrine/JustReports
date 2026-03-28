@@ -14,35 +14,30 @@ import me.fortibrine.justreports.command.error.PermissionHandler;
 import me.fortibrine.justreports.config.ConfigManager;
 import me.fortibrine.justreports.config.MainConfig;
 import me.fortibrine.justreports.dialog.DialogService;
-import me.fortibrine.justreports.gui.ReportListMenu;
+import me.fortibrine.justreports.gui.MenuFactory;
+import me.fortibrine.justreports.gui.handler.InventoryHandler;
 import me.fortibrine.justreports.question.QuestionService;
 import me.fortibrine.justreports.question.QuestionServiceImpl;
 import me.fortibrine.justreports.reputation.ReputationService;
 import me.fortibrine.justreports.reputation.ReputationServiceImpl;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.boomearo.menuinv.api.Menu;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
 @Getter
-public final class JustReportsPlugin extends JavaPlugin {
-
-    @Getter
-    private static JustReportsPlugin instance;
-
+public class JustReportsPlugin extends JavaPlugin {
     private LiteCommands<CommandSender> liteCommands;
     private ConfigManager configManager;
 
     private QuestionService questionService;
     private ReputationService reputationService;
     private DialogService dialogService;
+    private MenuFactory menuFactory;
 
     @Override
     public void onLoad() {
-        instance = this;
-
         Logger.setGlobalLogLevel(Level.OFF);
 
         try {
@@ -76,45 +71,37 @@ public final class JustReportsPlugin extends JavaPlugin {
             return;
         }
 
-        dialogService = new DialogService(this, configManager);
+        dialogService = new DialogService(configManager);
+        menuFactory = new MenuFactory(questionService, configManager);
 
     }
 
     @Override
     public void onEnable() {
-        Menu.initMenu(this);
-        
-        new ReportListMenu(
-                questionService,
-                reputationService,
-                this,
-                configManager.getReportListMenuConfig(),
-                dialogService,
-                configManager
-        ).registerMenu();
 
         getServer().getPluginManager().registerEvents(dialogService, this);
 
         this.liteCommands = LiteBukkitFactory.builder(getDescription().getName().toLowerCase())
                 .commands(
                     new CommandReport(questionService, configManager),
-                    new CommandReports(),
+                    new CommandReports(menuFactory),
                     new CommandReputation(reputationService, configManager)
                 )
                 .invalidUsage(new InvalidUsageHandlerImpl(configManager))
                 .missingPermission(new PermissionHandler(configManager))
                 .build();
 
+        getServer().getPluginManager().registerEvents(new InventoryHandler(), this);
+
     }
 
     @Override
     public void onDisable() {
-        instance = null;
-
         dialogService = null;
         configManager = null;
         questionService = null;
         reputationService = null;
+        menuFactory = null;
 
         if (this.liteCommands != null) {
             this.liteCommands.unregister();

@@ -4,19 +4,18 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import lombok.RequiredArgsConstructor;
 import me.fortibrine.justreports.config.ConfigManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
 
 import java.util.UUID;
 
 @RequiredArgsConstructor
 public class DialogService implements Listener {
 
-    private final Plugin plugin;
     private final ConfigManager configManager;
     private final BiMap<UUID, UUID> activeDialog = HashBiMap.create();
 
@@ -40,7 +39,7 @@ public class DialogService implements Listener {
 
         if (activeDialog.containsValue(playerId)) {
             UUID adminId = activeDialog.inverse().get(playerId);
-            Player admin = plugin.getServer().getPlayer(adminId);
+            Player admin = Bukkit.getPlayer(adminId);
 
             if (admin == null) {
                 activeDialog.remove(adminId);
@@ -59,7 +58,7 @@ public class DialogService implements Listener {
 
         if (activeDialog.containsKey(playerId)) {
             UUID targetPlayerId = activeDialog.get(playerId);
-            Player targetPlayer = plugin.getServer().getPlayer(targetPlayerId);
+            Player targetPlayer = Bukkit.getPlayer(targetPlayerId);
 
             if (targetPlayer == null) {
                 activeDialog.remove(playerId);

@@ -28,9 +28,6 @@ dependencies {
     }
     implementation(libs.configurate)
     implementation(libs.ormlite)
-    implementation(fileTree("libs") {
-        include("*.jar")
-    })
 
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)

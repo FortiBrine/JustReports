@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -16,7 +15,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final ConfigManager configManager;
 
-    private final Map<UUID, String> questions = new ConcurrentHashMap<>();
+    private final Map<UUID, String> questions = Collections.synchronizedMap(new LinkedHashMap<>());
     private final BiMap<UUID, UUID> adminAssignments = HashBiMap.create();
 
     @Override
@@ -27,6 +26,13 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public Optional<String> getQuestion(Player player) {
         return Optional.ofNullable(questions.get(player.getUniqueId()));
+    }
+
+    @Override
+    public Map<UUID, String> getAllQuestions() {
+        synchronized (questions) {
+            return Collections.unmodifiableMap(new LinkedHashMap<>(questions));
+        }
     }
 
     @Override
