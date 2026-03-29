@@ -6,7 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 

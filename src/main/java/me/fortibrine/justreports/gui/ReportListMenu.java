@@ -2,6 +2,7 @@ package me.fortibrine.justreports.gui;
 
 import lombok.RequiredArgsConstructor;
 import me.fortibrine.justreports.config.ItemConfig;
+import me.fortibrine.justreports.config.MessagesConfig;
 import me.fortibrine.justreports.question.QuestionService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -13,27 +14,24 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jspecify.annotations.NonNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class ReportListMenu implements InventoryHolder {
 
     private final Player player;
     private final QuestionService questionService;
+    private final MessagesConfig messagesConfig;
     private final ReportListMenuConfig config;
-    private final Map<UUID, String> questions = new LinkedHashMap<>();
+
+    private int page;
+    private int[] questionSlots;
+    private Map<UUID, String> pageQuestions;
 
     private Inventory inventory;
 
-    public void loadQuestions() {
-        questions.clear();
-        questions.putAll(questionService.getAllQuestions());
-    }
-
     public void open(int page) {
-        loadQuestions();
-
         String[] hologramLines = config.getHologram();
-        Map<Character, ItemConfig> items = config.getItems();
         int slots = hologramLines.length * 9;
 
         inventory = Bukkit.createInventory(
@@ -42,21 +40,24 @@ public class ReportListMenu implements InventoryHolder {
                 config.getTitle()
         );
 
-        int[] questionSlots = getQuestionSlots();
-        Map<UUID, String> pageQuestions = getPageQuestions(page, questionSlots);
+        load(page);
 
         renderDefaultItems();
-        renderQuestionItems(questionSlots, pageQuestions);
+        renderQuestionItems();
 
         player.openInventory(inventory);
     }
 
-    private int[] getQuestionSlots() {
+    private void load(int page) {
+        this.page = page;
+
         String[] hologramLines = config.getHologram();
         Map<Character, ItemConfig> items = config.getItems();
 
-        List<Integer> questionSlots = new ArrayList<>();
+        int[] temp = new int[hologramLines.length * 9];
+        int count = 0;
         int slot = 0;
+
         for (String line : hologramLines) {
             for (int c : line.chars().toArray()) {
                 if (c == ' ') continue;
@@ -65,17 +66,15 @@ public class ReportListMenu implements InventoryHolder {
                 if (itemConfig == null) continue;
 
                 if (ItemConfig.ItemType.QUESTION == itemConfig.getItemType().orElse(null)) {
-                    questionSlots.add(slot);
+                    temp[count++] = slot;
                 }
                 slot++;
             }
         }
 
-        return questionSlots.stream().mapToInt(Integer::intValue).toArray();
-    }
+        questionSlots = Arrays.copyOf(temp, count);
 
-    private Map<UUID, String> getPageQuestions(int page, int[] questionSlots) {
-        return questions.entrySet().stream()
+        pageQuestions = questionService.getAllQuestions().entrySet().stream()
                 .skip((long) questionSlots.length * page)
                 .limit(questionSlots.length)
                 .collect(
@@ -91,10 +90,11 @@ public class ReportListMenu implements InventoryHolder {
 
         int slot = 0;
         for (String line : hologramLines) {
-            for (int c : line.chars().toArray()) {
+            for (int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
                 if (c == ' ') continue;
 
-                ItemConfig itemConfig = items.get((char) c);
+                ItemConfig itemConfig = items.get(c);
 
                 if (itemConfig == null) {
                     slot++;
@@ -118,7 +118,7 @@ public class ReportListMenu implements InventoryHolder {
         }
     }
 
-    private void renderQuestionItems(int[] questionSlots, Map<UUID, String> pageQuestions) {
+    private void renderQuestionItems() {
         int index = 0;
 
         ItemConfig itemConfig = config.getItems().values().stream()
@@ -134,11 +134,18 @@ public class ReportListMenu implements InventoryHolder {
             ItemMeta itemMeta = itemStack.getItemMeta();
 
             Player targetPlayer = Bukkit.getPlayer(entry.getKey());
-            if (targetPlayer == null) continue;
+            if (targetPlayer == null) {
+                index++;
+                continue;
+            }
 
             String playerName = targetPlayer.getName();
             itemMeta.setDisplayName(itemConfig.getName().replace("%player%", playerName));
-            itemMeta.setLore(Arrays.asList(itemConfig.getLore()));
+            itemMeta.setLore(Arrays.stream(itemConfig.getLore())
+                    .map(line -> line
+                            .replace("%player%", playerName)
+                            .replace("%question%", entry.getValue()))
+                    .collect(Collectors.toList()));
 
             itemStack.setItemMeta(itemMeta);
             inventory.setItem(questionSlots[index], itemStack);
@@ -171,11 +178,65 @@ public class ReportListMenu implements InventoryHolder {
         String[] actions = itemConfig.getActions().get(event.getClick());
         if (actions == null) return;
 
-        int[] questionSlots = getQuestionSlots();
-
         for (String action : actions) {
+            if ("[previous_page]".equals(action) && hasPreviousPage()) {
+                open(page - 1);
+            } else if ("[next_page]".equals(action) && hasNextPage()) {
+                open(page + 1);
+            } else if ("[close_inventory]".equals(action)) {
+                player.closeInventory();
+            } else if (action.startsWith("[answer_report]")) {
+                Player targetPlayer = Bukkit.getPlayer(getQuestionAtSlot(slot));
 
+                if (targetPlayer == null) {
+                    player.sendMessage(messagesConfig.getPlayerNotFound());
+                    return;
+                }
+
+                if (!questionService.hasQuestion(targetPlayer)) {
+                    return;
+                }
+
+                if (questionService.isAdminBusy(player) || questionService.hasAssignedAdmin(targetPlayer)) {
+                    player.sendMessage(messagesConfig.getCannotStartDialogAlreadyInDialog());
+                    targetPlayer.sendMessage(messagesConfig.getReportTakenByAdmin()
+                            .replace("%admin%", player.getName()));
+                    return;
+                }
+
+                targetPlayer.sendMessage(messagesConfig.getReportTakenByAdmin());
+                player.sendMessage(messagesConfig.getAdminMessagesSection().getReportTaken()
+                        .replace("%player%", targetPlayer.getName()));
+                questionService.assignAdmin(targetPlayer, player);
+            } else if (action.startsWith("[close_report]")) {
+                Player targetPlayer = Bukkit.getPlayer(getQuestionAtSlot(slot));
+                if (targetPlayer != null) {
+                    player.sendMessage(messagesConfig.getAdminMessagesSection().getReportClosed()
+                            .replace("%player%", targetPlayer.getName()));
+                    questionService.closeQuestion(targetPlayer);
+                }
+            }
         }
+    }
+
+    public boolean hasPreviousPage() {
+        return page > 0;
+    }
+
+    public boolean hasNextPage() {
+        int totalQuestions = questionService.getQuestionCount();
+        int questionsPerPage = questionSlots.length;
+        return (page + 1) * questionsPerPage < totalQuestions;
+    }
+
+    public UUID getQuestionAtSlot(int slot) {
+        int index = Arrays.binarySearch(questionSlots, slot);
+        if (index < 0) return null;
+
+        List<UUID> questionIds = new ArrayList<>(pageQuestions.keySet());
+        if (index >= questionIds.size()) return null;
+
+        return questionIds.get(index);
     }
 
 }

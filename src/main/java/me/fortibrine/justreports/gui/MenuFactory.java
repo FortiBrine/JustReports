@@ -15,6 +15,7 @@ public class MenuFactory {
         new ReportListMenu(
                 player,
                 questionService,
+                configManager.getMessageConfig(),
                 configManager.getReportListMenuConfig()
         ).open(0);
     }

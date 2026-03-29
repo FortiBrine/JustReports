@@ -94,10 +94,12 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Set<Player> getPlayersWithQuestions() {
-        return questions.keySet().stream()
-                .map(Bukkit::getPlayer)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+        synchronized (questions) {
+            return questions.keySet().stream()
+                    .map(Bukkit::getPlayer)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+        }
     }
 
     @Override
@@ -120,5 +122,10 @@ public class QuestionServiceImpl implements QuestionService {
         Bukkit.getOnlinePlayers().stream()
                 .filter(p -> p.hasPermission("justreports.see"))
                 .forEach(p -> p.sendMessage(formattedMessage));
+    }
+
+    @Override
+    public int getQuestionCount() {
+        return questions.size();
     }
 }

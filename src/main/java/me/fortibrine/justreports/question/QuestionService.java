@@ -22,4 +22,5 @@ public interface QuestionService {
     boolean isAdminBusy(Player admin);
     void closeQuestion(Player player);
     void notifyAdmins(Player player, String message);
+    int getQuestionCount();
 }

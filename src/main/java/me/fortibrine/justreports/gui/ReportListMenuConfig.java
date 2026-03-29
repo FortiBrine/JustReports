@@ -46,6 +46,7 @@ public class ReportListMenuConfig {
             'P', new ItemConfig() {{
                 setName("§aPrevious Page");
                 setMaterial(Material.ARROW);
+                setItemType(Optional.empty());
                 setActions(
                         ImmutableMap.of(
                                 ClickType.LEFT, new String[]{"[previous_page]"}
@@ -55,6 +56,7 @@ public class ReportListMenuConfig {
             'N', new ItemConfig() {{
                 setName("§aNext Page");
                 setMaterial(Material.ARROW);
+                setItemType(Optional.empty());
                 setActions(
                         ImmutableMap.of(
                                 ClickType.LEFT, new String[]{"[next_page]"}
