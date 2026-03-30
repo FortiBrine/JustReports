@@ -59,7 +59,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public void notifyAdmins(Player player, String message) {
-        String formattedMessage = messagesConfigProvider.getConfig().getAdminMessagesSection().getNewReport()
+        String formattedMessage = messagesConfigProvider.getConfig().getAdmin().getNewReport()
                 .replace("%player%", player.getName())
                 .replace("%question%", message);
 

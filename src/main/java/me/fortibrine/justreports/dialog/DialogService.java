@@ -48,7 +48,7 @@ public class DialogService implements Listener {
 
             event.setCancelled(true);
 
-            String playerMessage = messagesConfigProvider.getConfig().getChatSection().getPlayerMessageFormat()
+            String playerMessage = messagesConfigProvider.getConfig().getChat().getPlayerMessageFormat()
                     .replace("%player%", admin.getName())
                     .replace("%message", chatMessage);
 
@@ -67,7 +67,7 @@ public class DialogService implements Listener {
 
             event.setCancelled(true);
 
-            String adminMessage = messagesConfigProvider.getConfig().getChatSection().getAdminMessageFormat()
+            String adminMessage = messagesConfigProvider.getConfig().getChat().getAdminMessageFormat()
                     .replace("%player%", player.getName())
                     .replace("%message", chatMessage);
 

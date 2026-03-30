@@ -2,57 +2,58 @@ package me.fortibrine.justreports.config;
 
 import lombok.Getter;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Comment;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 @Getter
 @ConfigSerializable
 public class MessagesConfig {
-    private String reportSent = "Your report has been sent to the admins.";
-    private String permissionDenied = "You don't have permission to use this command.";
-    private String alreadySentReport = "You have already sent a report.";
-    private String cannotTakeOwnReport = "You cannot take your own report.";
-    private String reportTakenByAdmin = "Your report has been taken by %admin%. Please wait for them to respond.";
-    private String cannotStartDialogAlreadyInDialog = "Cannot start dialog: you or this player is already in another dialog.";
-
-    @Comment("The format for messages in the admin-player chat. Use %admin% for the admin's name, %player% for the player's name, and %message% for the message content.")
-    @Setting("chat")
-    private ChatSection chatSection = new ChatSection();
+    private final PlayerMessages player = new PlayerMessages();
+    private final AdminMessages admin = new AdminMessages();
+    private final ChatMessages chat = new ChatMessages();
+    private final UsageMessages usage = new UsageMessages();
 
     @Getter
     @ConfigSerializable
-    public static class ChatSection {
-        private String adminMessageFormat = "[Admin] %player%: %message%";
-        private String playerMessageFormat = "[Player] %player%: %message%";
+    public static class PlayerMessages {
+        private final String reportSent = "Your report has been sent to the admins.";
+        private final String permissionDenied = "You don't have permission to use this command.";
+        private final String alreadySentReport = "You have already sent a report.";
+        private final String reportTakenByAdmin = "Your report has been taken by %admin%. Please wait for them to respond.";
+        private final String otherPlayerReputation = "%player%'s current reputation is %reputation% stars.";
     }
-
-    @Comment("The messages sent to admins when a new report is submitted, taken, or closed. Use %player% for the player's name, %question% for the report question, and %admin% for the admin's name.")
-    @Setting("admin")
-    private AdminMessagesSection adminMessagesSection = new AdminMessagesSection();
 
     @Getter
     @ConfigSerializable
-    public static class AdminMessagesSection {
-        private String newReport = "New report from %player%: %question%";
-        private String reportClosed = "The report from %player% has been closed.";
-        private String reportTaken = "You have taken the report from %player%.";
-        private String reportTakenByOtherAdmin = "%admin% has taken the report from %player%.";
+    public static class AdminMessages {
+        private final String newReport = "New report from %player%: %question%";
+        private final String cannotTakeOwnReport = "You cannot take your own report.";
+        private final String noReports = "There are currently no reports.";
+        private final String reportClosed = "The report from %player% has been closed.";
+        private final String reportTaken = "You have taken the report from %player%.";
+        private final String reportTakenByOtherAdmin = "%admin% has taken the report from %player%.";
+        private final String receivedReputation = "You have received %stars% stars from %player%. Your current reputation is %reputation% stars.";
+        private final String playerNotFound = "Player %player% not found.";
+        private final String cannotStartDialogAlreadyInDialog = "Cannot start dialog: you or this player is already in another dialog.";
+        private final String currentReputation = "Your current reputation is %reputation% stars.";
     }
-
-    @Comment("The usage messages for the commands.")
-    @Setting("usage")
-    private UsageMessagesSection usageMessagesSection = new UsageMessagesSection();
 
     @Getter
     @ConfigSerializable
-    public static class UsageMessagesSection {
-        private String reportUsage = "Usage: /report <question>";
-        private String reportsUsage = "Usage: /reports";
-        private String reputationUsage = "Usage: /reputation [player]";
+    public static class ChatMessages {
+        private final String adminMessageFormat = "[Admin] %player%: %message%";
+        private final String playerMessageFormat = "[Player] %player%: %message%";
     }
 
-    private String receivedReputation = "You have received %stars% stars from %player%. Your current reputation is %reputation% stars.";
-    private String currentReputation = "Your current reputation is %reputation% stars.";
-    private String otherPlayerReputation = "%player%'s current reputation is %reputation% stars.";
-    private String playerNotFound = "Player %player% not found.";
+    @Getter
+    @ConfigSerializable
+    public static class UsageMessages {
+        @Setting("report")
+        private final String reportUsage = "Usage: /report <question>";
+
+        @Setting("reports")
+        private final String reportsUsage = "Usage: /reports";
+
+        @Setting("reputation")
+        private final String reputationUsage = "Usage: /reputation [player]";
+    }
 }

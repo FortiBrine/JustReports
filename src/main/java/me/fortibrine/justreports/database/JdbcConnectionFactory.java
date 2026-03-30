@@ -4,9 +4,10 @@ import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import me.fortibrine.justreports.config.MainConfig;
 
-import static me.fortibrine.justreports.config.MainConfig.DatabaseConfig.DatabaseType.*;
-
 import java.sql.SQLException;
+
+import static me.fortibrine.justreports.config.MainConfig.DatabaseConfig.DatabaseType.MYSQL;
+import static me.fortibrine.justreports.config.MainConfig.DatabaseConfig.DatabaseType.SQLITE;
 
 public class JdbcConnectionFactory {
 

@@ -42,6 +42,8 @@ public class JustReportsPlugin extends JavaPlugin {
     @Override
     public void onLoad() {
         Logger.setGlobalLogLevel(Level.OFF);
+        getLogger().warning("JustReports is using a simple connection pool and is not recommended for servers with 500+ online players. " +
+                "Consider using a more robust connection pool for better performance.");
 
         try {
             configManager = new ConfigManager(getDataFolder());
@@ -87,8 +89,8 @@ public class JustReportsPlugin extends JavaPlugin {
                     new CommandReputation(reputationService, messagesConfigProvider),
                     new CommandReload(configManager, messagesConfigProvider)
                 )
-                .invalidUsage(new InvalidUsageHandlerImpl(configManager))
-                .missingPermission(new PermissionHandler(configManager))
+                .invalidUsage(new InvalidUsageHandlerImpl(messagesConfigProvider))
+                .missingPermission(new PermissionHandler(messagesConfigProvider))
                 .build();
 
         getServer().getPluginManager().registerEvents(new InventoryHandler(), this);

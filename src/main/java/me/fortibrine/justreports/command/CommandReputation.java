@@ -27,7 +27,7 @@ public class CommandReputation {
     @Execute
     public void execute(@Context Player sender) {
         double reputation = reputationService.getReputation(sender);
-        String message = messagesConfigProvider.getConfig().getCurrentReputation()
+        String message = messagesConfigProvider.getConfig().getPlayer().getOtherPlayerReputation()
                 .replace("%reputation%", String.format("%.2f", reputation));
         sender.sendMessage(message);
     }
@@ -40,14 +40,14 @@ public class CommandReputation {
         UUID targetUUID = targetPlayer.getUniqueId();
 
         if (targetPlayer.getName() == null) {
-            String message = messagesConfigProvider.getConfig().getPlayerNotFound()
+            String message = messagesConfigProvider.getConfig().getAdmin().getPlayerNotFound()
                     .replace("%player%", target);
             sender.sendMessage(message);
             return;
         }
 
         double reputation = reputationService.getReputationByUniqueId(targetUUID);
-        String message = messagesConfigProvider.getConfig().getOtherPlayerReputation()
+        String message = messagesConfigProvider.getConfig().getPlayer().getOtherPlayerReputation()
                 .replace("%player%", targetPlayer.getName())
                 .replace("%reputation%", String.format("%.2f", reputation));
         sender.sendMessage(message);

@@ -189,7 +189,7 @@ public class ReportListMenu implements InventoryHolder {
                 Player targetPlayer = Bukkit.getPlayer(getQuestionAtSlot(slot));
 
                 if (targetPlayer == null) {
-                    player.sendMessage(messagesConfigProvider.getConfig().getPlayerNotFound());
+                    player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getPlayerNotFound());
                     return;
                 }
 
@@ -198,20 +198,20 @@ public class ReportListMenu implements InventoryHolder {
                 }
 
                 if (true) {
-                    player.sendMessage(messagesConfigProvider.getConfig().getCannotStartDialogAlreadyInDialog());
-                    targetPlayer.sendMessage(messagesConfigProvider.getConfig().getReportTakenByAdmin()
+                    player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getCannotStartDialogAlreadyInDialog());
+                    targetPlayer.sendMessage(messagesConfigProvider.getConfig().getPlayer().getReportTakenByAdmin()
                             .replace("%admin%", player.getName()));
                     return;
                 }
 
-                targetPlayer.sendMessage(messagesConfigProvider.getConfig().getReportTakenByAdmin());
-                player.sendMessage(messagesConfigProvider.getConfig().getAdminMessagesSection().getReportTaken()
+                targetPlayer.sendMessage(messagesConfigProvider.getConfig().getPlayer().getReportTakenByAdmin());
+                player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getReportTaken()
                         .replace("%player%", targetPlayer.getName()));
                 //questionService.assignAdmin(targetPlayer, player);
             } else if (action.startsWith("[close_report]")) {
                 Player targetPlayer = Bukkit.getPlayer(getQuestionAtSlot(slot));
                 if (targetPlayer != null) {
-                    player.sendMessage(messagesConfigProvider.getConfig().getAdminMessagesSection().getReportClosed()
+                    player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getReportClosed()
                             .replace("%player%", targetPlayer.getName()));
                     questionService.closeQuestion(targetPlayer);
                 }
