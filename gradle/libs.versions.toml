@@ -1,5 +1,5 @@
 [versions]
-shadow = "9.0.2"
+shadow = "8.3.10"
 paper = "1.13.2-R0.1-SNAPSHOT"
 lombok = "1.18.38"
 litecommands = "3.10.2"
