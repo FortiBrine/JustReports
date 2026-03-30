@@ -13,8 +13,8 @@ import java.util.Optional;
 @Getter
 @ConfigSerializable
 public class ReportListMenuConfig {
-    private String title = "Reports";
-    private String[] hologram = new String[] {
+    private final String title = "Reports";
+    private final String[] hologram = new String[] {
             "X X X X X X X X X",
             "X X X X X X X X X",
             "X X X X X X X X X",
@@ -23,7 +23,7 @@ public class ReportListMenuConfig {
             "P . . . . . . . N",
     };
 
-    private Map<Character, ItemConfig> items = ImmutableMap.of(
+    private final Map<Character, ItemConfig> items = ImmutableMap.of(
             'X', new ItemConfig() {{
                 setName("§f%player%");
                 setItemType(Optional.of(ItemType.QUESTION));

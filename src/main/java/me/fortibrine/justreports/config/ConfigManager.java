@@ -1,6 +1,7 @@
 package me.fortibrine.justreports.config;
 
 import lombok.Getter;
+import me.fortibrine.justreports.config.provider.MessagesConfigProvider;
 import me.fortibrine.justreports.gui.ReportListMenuConfig;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
@@ -25,7 +26,7 @@ public class ConfigManager {
     private MainConfig mainConfig;
 
     @Getter
-    private MessagesConfig messageConfig;
+    private MessagesConfigProvider messagesConfigProvider;
 
     @Getter
     private ReportListMenuConfig reportListMenuConfig;
@@ -35,7 +36,7 @@ public class ConfigManager {
         messageConfigFile = new File(dataFolder, "messages.yml");
         reportListMenuConfigFile = new File(dataFolder, "menu/report_list.yml");
 
-        final int indent = 2;
+        int indent = 2;
 
         mainConfigLoader = YamlConfigurationLoader.builder()
                 .path(mainConfigFile.toPath())
@@ -59,10 +60,10 @@ public class ConfigManager {
     public void load() throws IOException {
         // messages.yml
         ConfigurationNode messagesConfigRoot = messageConfigLoader.load();
-        messageConfig = messagesConfigRoot.get(MessagesConfig.class, new MessagesConfig());
+        messagesConfigProvider.setConfig(messagesConfigRoot.get(MessagesConfig.class, new MessagesConfig()));
 
         if (!messageConfigFile.exists()) {
-            messagesConfigRoot.set(MessagesConfig.class, messageConfig);
+            messagesConfigRoot.set(MessagesConfig.class, messagesConfigProvider.getConfig());
             messageConfigLoader.save(messagesConfigRoot);
         }
 

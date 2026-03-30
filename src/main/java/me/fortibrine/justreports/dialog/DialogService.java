@@ -3,7 +3,7 @@ package me.fortibrine.justreports.dialog;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import lombok.RequiredArgsConstructor;
-import me.fortibrine.justreports.config.ConfigManager;
+import me.fortibrine.justreports.config.provider.MessagesConfigProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DialogService implements Listener {
 
-    private final ConfigManager configManager;
+    private final MessagesConfigProvider messagesConfigProvider;
     private final BiMap<UUID, UUID> activeDialog = HashBiMap.create();
 
     public boolean isInDialog(UUID playerId) {
@@ -48,7 +48,7 @@ public class DialogService implements Listener {
 
             event.setCancelled(true);
 
-            String playerMessage = configManager.getMessageConfig().getChatSection().getPlayerMessageFormat()
+            String playerMessage = messagesConfigProvider.getConfig().getChatSection().getPlayerMessageFormat()
                     .replace("%player%", admin.getName())
                     .replace("%message", chatMessage);
 
@@ -67,7 +67,7 @@ public class DialogService implements Listener {
 
             event.setCancelled(true);
 
-            String adminMessage = configManager.getMessageConfig().getChatSection().getAdminMessageFormat()
+            String adminMessage = messagesConfigProvider.getConfig().getChatSection().getAdminMessageFormat()
                     .replace("%player%", player.getName())
                     .replace("%message", chatMessage);
 

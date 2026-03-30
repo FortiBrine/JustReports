@@ -1,11 +1,11 @@
 package me.fortibrine.justreports;
 
-import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import lombok.Getter;
+import me.fortibrine.justreports.command.CommandReload;
 import me.fortibrine.justreports.command.CommandReport;
 import me.fortibrine.justreports.command.CommandReports;
 import me.fortibrine.justreports.command.CommandReputation;
@@ -13,6 +13,8 @@ import me.fortibrine.justreports.command.error.InvalidUsageHandlerImpl;
 import me.fortibrine.justreports.command.error.PermissionHandler;
 import me.fortibrine.justreports.config.ConfigManager;
 import me.fortibrine.justreports.config.MainConfig;
+import me.fortibrine.justreports.config.provider.MessagesConfigProvider;
+import me.fortibrine.justreports.database.JdbcConnectionFactory;
 import me.fortibrine.justreports.dialog.DialogService;
 import me.fortibrine.justreports.gui.MenuFactory;
 import me.fortibrine.justreports.gui.handler.InventoryHandler;
@@ -30,6 +32,7 @@ import java.sql.SQLException;
 public class JustReportsPlugin extends JavaPlugin {
     private LiteCommands<CommandSender> liteCommands;
     private ConfigManager configManager;
+    private MessagesConfigProvider messagesConfigProvider;
 
     private QuestionService questionService;
     private ReputationService reputationService;
@@ -42,6 +45,7 @@ public class JustReportsPlugin extends JavaPlugin {
 
         try {
             configManager = new ConfigManager(getDataFolder());
+            messagesConfigProvider = configManager.getMessagesConfigProvider();
             configManager.load();
         } catch (IOException e) {
             getLogger().severe("Failed to load configuration files: " + e.getMessage());
@@ -49,30 +53,25 @@ public class JustReportsPlugin extends JavaPlugin {
             return;
         }
 
-        questionService = new QuestionServiceImpl(configManager);
+        questionService = new QuestionServiceImpl(messagesConfigProvider);
 
         MainConfig.DatabaseConfig databaseConfig = configManager.getMainConfig().getDatabaseConfig();
-        try {
-            if (databaseConfig.getType().equals("sqlite")) {
-                getLogger().info("Using SQLite database.");
+        JdbcConnectionFactory connectionFactory = new JdbcConnectionFactory();
 
-                reputationService = new ReputationServiceImpl(
-                        this,
-                        new JdbcPooledConnectionSource("jdbc:sqlite:" + databaseConfig.getPath())
-                );
-            } else {
-                getLogger().severe("Unsupported database type: " + databaseConfig.getType());
-                getServer().getPluginManager().disablePlugin(this);
-                return;
-            }
+        try {
+            reputationService = new ReputationServiceImpl(this, connectionFactory.createConnection(databaseConfig));
         } catch (SQLException e) {
-            getLogger().severe("Failed to initialize database connection: " + e.getMessage());
+            getLogger().severe("Failed to connect to the database: " + e.getMessage());
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        } catch (IllegalArgumentException e) {
+            getLogger().severe("Invalid database configuration: " + e.getMessage());
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        dialogService = new DialogService(configManager);
-        menuFactory = new MenuFactory(questionService, configManager);
+        dialogService = new DialogService(messagesConfigProvider);
+        menuFactory = new MenuFactory(questionService, configManager, messagesConfigProvider);
 
     }
 
@@ -83,9 +82,10 @@ public class JustReportsPlugin extends JavaPlugin {
 
         this.liteCommands = LiteBukkitFactory.builder(getDescription().getName().toLowerCase())
                 .commands(
-                    new CommandReport(questionService, configManager),
+                    new CommandReport(questionService, messagesConfigProvider),
                     new CommandReports(menuFactory),
-                    new CommandReputation(reputationService, configManager)
+                    new CommandReputation(reputationService, messagesConfigProvider),
+                    new CommandReload(configManager, messagesConfigProvider)
                 )
                 .invalidUsage(new InvalidUsageHandlerImpl(configManager))
                 .missingPermission(new PermissionHandler(configManager))

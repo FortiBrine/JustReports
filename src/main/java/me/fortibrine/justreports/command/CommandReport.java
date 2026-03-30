@@ -7,6 +7,7 @@ import dev.rollczi.litecommands.annotations.join.Join;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import lombok.RequiredArgsConstructor;
 import me.fortibrine.justreports.config.ConfigManager;
+import me.fortibrine.justreports.config.provider.MessagesConfigProvider;
 import me.fortibrine.justreports.question.QuestionService;
 import org.bukkit.entity.Player;
 
@@ -16,16 +17,16 @@ import org.bukkit.entity.Player;
 public class CommandReport {
 
     private final QuestionService questionService;
-    private final ConfigManager configManager;
+    private final MessagesConfigProvider messagesConfigProvider;
 
     @Execute
     public void execute(@Context Player player, @Join String question) {
         if (questionService.hasQuestion(player)) {
-            player.sendMessage(configManager.getMessageConfig().getAlreadySentReport());
+            player.sendMessage(messagesConfigProvider.getConfig().getAlreadySentReport());
             return;
         }
 
-        player.sendMessage(configManager.getMessageConfig().getReportSent());
+        player.sendMessage(messagesConfigProvider.getConfig().getReportSent());
         questionService.setQuestion(player, question);
         questionService.notifyAdmins(player, question);
     }

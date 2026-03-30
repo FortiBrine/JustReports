@@ -5,28 +5,26 @@ api-version: 1.13
 
 permissions:
   justreports.*:
-    description: "All permissions"
-    default: op
+    default: false
     children:
-      justreports.report: true
-      justreports.reports: true
-      justreports.reports.answer: true
-      justreports.see: true
+      - justreports.report
+      - justreports.reports
+      - justreports.reports.answer
+      - justreports.see
+      - justreports.reputation
+      - justreports.reputation.other
+      - justreports.reload
   justreports.report:
     default: true
-    description: "Permission to send a report"
   justreports.reports:
     default: op
-    description: "Permission to view the list of reports"
   justreports.reports.answer:
     default: op
-    description: "Permission to reply to a report"
   justreports.see:
     default: op
-    description: "Permission to view admin messages"
   justreports.reputation:
     default: op
-    description: "View your own reputation"
   justreports.reputation.other:
     default: op
-    description: "View other players' reputation"
+  justreports.reload:
+    default: op

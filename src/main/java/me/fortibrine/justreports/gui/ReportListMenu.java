@@ -2,7 +2,7 @@ package me.fortibrine.justreports.gui;
 
 import lombok.RequiredArgsConstructor;
 import me.fortibrine.justreports.config.ItemConfig;
-import me.fortibrine.justreports.config.MessagesConfig;
+import me.fortibrine.justreports.config.provider.MessagesConfigProvider;
 import me.fortibrine.justreports.question.QuestionService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,7 +21,7 @@ public class ReportListMenu implements InventoryHolder {
 
     private final Player player;
     private final QuestionService questionService;
-    private final MessagesConfig messagesConfig;
+    private final MessagesConfigProvider messagesConfigProvider;
     private final ReportListMenuConfig config;
 
     private int page;
@@ -189,7 +189,7 @@ public class ReportListMenu implements InventoryHolder {
                 Player targetPlayer = Bukkit.getPlayer(getQuestionAtSlot(slot));
 
                 if (targetPlayer == null) {
-                    player.sendMessage(messagesConfig.getPlayerNotFound());
+                    player.sendMessage(messagesConfigProvider.getConfig().getPlayerNotFound());
                     return;
                 }
 
@@ -197,21 +197,21 @@ public class ReportListMenu implements InventoryHolder {
                     return;
                 }
 
-                if (questionService.isAdminBusy(player) || questionService.hasAssignedAdmin(targetPlayer)) {
-                    player.sendMessage(messagesConfig.getCannotStartDialogAlreadyInDialog());
-                    targetPlayer.sendMessage(messagesConfig.getReportTakenByAdmin()
+                if (true) {
+                    player.sendMessage(messagesConfigProvider.getConfig().getCannotStartDialogAlreadyInDialog());
+                    targetPlayer.sendMessage(messagesConfigProvider.getConfig().getReportTakenByAdmin()
                             .replace("%admin%", player.getName()));
                     return;
                 }
 
-                targetPlayer.sendMessage(messagesConfig.getReportTakenByAdmin());
-                player.sendMessage(messagesConfig.getAdminMessagesSection().getReportTaken()
+                targetPlayer.sendMessage(messagesConfigProvider.getConfig().getReportTakenByAdmin());
+                player.sendMessage(messagesConfigProvider.getConfig().getAdminMessagesSection().getReportTaken()
                         .replace("%player%", targetPlayer.getName()));
-                questionService.assignAdmin(targetPlayer, player);
+                //questionService.assignAdmin(targetPlayer, player);
             } else if (action.startsWith("[close_report]")) {
                 Player targetPlayer = Bukkit.getPlayer(getQuestionAtSlot(slot));
                 if (targetPlayer != null) {
-                    player.sendMessage(messagesConfig.getAdminMessagesSection().getReportClosed()
+                    player.sendMessage(messagesConfigProvider.getConfig().getAdminMessagesSection().getReportClosed()
                             .replace("%player%", targetPlayer.getName()));
                     questionService.closeQuestion(targetPlayer);
                 }

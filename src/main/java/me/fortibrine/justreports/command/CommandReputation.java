@@ -7,7 +7,7 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import lombok.RequiredArgsConstructor;
-import me.fortibrine.justreports.config.ConfigManager;
+import me.fortibrine.justreports.config.provider.MessagesConfigProvider;
 import me.fortibrine.justreports.reputation.ReputationService;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -21,13 +21,13 @@ import java.util.UUID;
 public class CommandReputation {
 
     private final ReputationService reputationService;
-    private final ConfigManager configManager;
+    private final MessagesConfigProvider messagesConfigProvider;
 
     @Async
     @Execute
     public void execute(@Context Player sender) {
         double reputation = reputationService.getReputation(sender);
-        String message = configManager.getMessageConfig().getCurrentReputation()
+        String message = messagesConfigProvider.getConfig().getCurrentReputation()
                 .replace("%reputation%", String.format("%.2f", reputation));
         sender.sendMessage(message);
     }
@@ -40,14 +40,14 @@ public class CommandReputation {
         UUID targetUUID = targetPlayer.getUniqueId();
 
         if (targetPlayer.getName() == null) {
-            String message = configManager.getMessageConfig().getPlayerNotFound()
+            String message = messagesConfigProvider.getConfig().getPlayerNotFound()
                     .replace("%player%", target);
             sender.sendMessage(message);
             return;
         }
 
         double reputation = reputationService.getReputationByUniqueId(targetUUID);
-        String message = configManager.getMessageConfig().getOtherPlayerReputation()
+        String message = messagesConfigProvider.getConfig().getOtherPlayerReputation()
                 .replace("%player%", targetPlayer.getName())
                 .replace("%reputation%", String.format("%.2f", reputation));
         sender.sendMessage(message);
