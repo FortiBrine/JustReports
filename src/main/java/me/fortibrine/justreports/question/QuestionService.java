@@ -13,8 +13,8 @@ public interface QuestionService {
     Map<UUID, String> getAllQuestions();
     void setQuestion(Player player, String question);
     void removeQuestion(Player player);
+    void removeQuestion(UUID playerId);
     Set<Player> getPlayersWithQuestions();
-    void closeQuestion(Player player);
     void notifyAdmins(Player player, String message);
     int getQuestionCount();
 }

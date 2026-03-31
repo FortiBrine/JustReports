@@ -3,6 +3,8 @@ package me.fortibrine.justreports.gui;
 import lombok.RequiredArgsConstructor;
 import me.fortibrine.justreports.config.ItemConfig;
 import me.fortibrine.justreports.config.provider.MessagesConfigProvider;
+import me.fortibrine.justreports.dialog.DialogService;
+import me.fortibrine.justreports.gui.config.ReportListMenuConfig;
 import me.fortibrine.justreports.question.QuestionService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,7 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,6 +25,7 @@ public class ReportListMenu implements InventoryHolder {
     private final QuestionService questionService;
     private final MessagesConfigProvider messagesConfigProvider;
     private final ReportListMenuConfig config;
+    private final DialogService dialogService;
 
     private int page;
     private int[] questionSlots;
@@ -155,7 +158,7 @@ public class ReportListMenu implements InventoryHolder {
     }
 
     @Override
-    public @NonNull Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
         return inventory;
     }
 
@@ -179,42 +182,47 @@ public class ReportListMenu implements InventoryHolder {
         if (actions == null) return;
 
         for (String action : actions) {
-            if ("[previous_page]".equals(action) && hasPreviousPage()) {
+            if (action.startsWith("[player]")) {
+                String command = action.substring("[player]".length()).trim();
+                player.performCommand(command);
+            } else if (action.startsWith("[console]")) {
+                String command = action.substring("[console]".length()).trim()
+                        .replace("%player%", player.getName());
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            } else if ("[previous_page]".equals(action) && hasPreviousPage()) {
                 open(page - 1);
             } else if ("[next_page]".equals(action) && hasNextPage()) {
                 open(page + 1);
             } else if ("[close_inventory]".equals(action)) {
                 player.closeInventory();
             } else if (action.startsWith("[answer_report]")) {
-                Player targetPlayer = Bukkit.getPlayer(getQuestionAtSlot(slot));
+                UUID targetPlayerId = getQuestionAtSlot(slot);
 
-                if (targetPlayer == null) {
-                    player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getPlayerNotFound());
-                    return;
+                if (targetPlayerId == null) {
+                    continue;
                 }
 
-                if (!questionService.hasQuestion(targetPlayer)) {
-                    return;
-                }
-
-                if (true) {
-                    player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getCannotStartDialogAlreadyInDialog());
-                    targetPlayer.sendMessage(messagesConfigProvider.getConfig().getPlayer().getReportTakenByAdmin()
-                            .replace("%admin%", player.getName()));
-                    return;
-                }
-
-                targetPlayer.sendMessage(messagesConfigProvider.getConfig().getPlayer().getReportTakenByAdmin());
-                player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getReportTaken()
-                        .replace("%player%", targetPlayer.getName()));
-                //questionService.assignAdmin(targetPlayer, player);
-            } else if (action.startsWith("[close_report]")) {
-                Player targetPlayer = Bukkit.getPlayer(getQuestionAtSlot(slot));
+                Player targetPlayer = Bukkit.getPlayer(targetPlayerId);
                 if (targetPlayer != null) {
-                    player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getReportClosed()
-                            .replace("%player%", targetPlayer.getName()));
-                    questionService.closeQuestion(targetPlayer);
+                    questionService.removeQuestion(targetPlayerId);
+                    continue;
                 }
+
+                handleTakeQuestion(targetPlayer);
+            } else if (action.startsWith("[close_report]")) {
+                UUID targetPlayerId = getQuestionAtSlot(slot);
+
+                if (targetPlayerId == null) {
+                    continue;
+                }
+
+                Player targetPlayer = Bukkit.getPlayer(targetPlayerId);
+                if (targetPlayer == null) {
+                    questionService.removeQuestion(targetPlayerId);
+                    continue;
+                }
+
+                handleCloseQuestion(targetPlayer);
             }
         }
     }
@@ -237,6 +245,14 @@ public class ReportListMenu implements InventoryHolder {
         if (index >= questionIds.size()) return null;
 
         return questionIds.get(index);
+    }
+
+    public void handleTakeQuestion(Player targetPlayer) {
+
+    }
+
+    public void handleCloseQuestion(Player targetPlayer) {
+
     }
 
 }

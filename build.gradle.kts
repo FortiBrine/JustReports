@@ -29,6 +29,7 @@ dependencies {
     implementation(libs.configurate)
     implementation(libs.ormlite)
 
+    compileOnly(libs.jetbrainsAnnotations)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
 }

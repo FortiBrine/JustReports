@@ -24,13 +24,18 @@ public class ReputationServiceImpl implements ReputationService {
 
     @Override
     public void addReputation(Player player, int value) {
+        addReputationByUniqueId(player.getUniqueId(), value);
+    }
+
+    @Override
+    public void addReputationByUniqueId(UUID playerId, int value) {
         try {
             PlayerReputationModel newModel = new PlayerReputationModel();
-            newModel.setPlayerId(player.getUniqueId());
+            newModel.setPlayerId(playerId);
             newModel.setReputation(value);
             reputationDao.create(newModel);
         } catch (SQLException e) {
-            plugin.getLogger().warning("Failed to add reputation for player " + player.getName() + ": " + e.getMessage());
+            plugin.getLogger().warning("Failed to add reputation for player " + playerId + ": " + e.getMessage());
         }
     }
 

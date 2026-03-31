@@ -15,45 +15,45 @@ public class MessagesConfig {
     @Getter
     @ConfigSerializable
     public static class PlayerMessages {
-        private final String reportSent = "Your report has been sent to the admins.";
-        private final String permissionDenied = "You don't have permission to use this command.";
-        private final String alreadySentReport = "You have already sent a report.";
-        private final String reportTakenByAdmin = "Your report has been taken by %admin%. Please wait for them to respond.";
-        private final String otherPlayerReputation = "%player%'s current reputation is %reputation% stars.";
+        private final String reportSent = "§a✓ §7Your report has been sent to the admins.";
+        private final String permissionDenied = "§c✗ §7You don't have permission to use this command.";
+        private final String alreadySentReport = "§e⚠ §7You have already sent a report.";
+        private final String reportTakenByAdmin = "§6ℹ §7Your report has been taken by §b%admin%§7. Please wait for them to respond.";
+        private final String otherPlayerReputation = "§b⭐ §7%player%'s current reputation is §e%reputation% stars§7.";
     }
 
     @Getter
     @ConfigSerializable
     public static class AdminMessages {
-        private final String newReport = "New report from %player%: %question%";
-        private final String cannotTakeOwnReport = "You cannot take your own report.";
-        private final String noReports = "There are currently no reports.";
-        private final String reportClosed = "The report from %player% has been closed.";
-        private final String reportTaken = "You have taken the report from %player%.";
-        private final String reportTakenByOtherAdmin = "%admin% has taken the report from %player%.";
-        private final String receivedReputation = "You have received %stars% stars from %player%. Your current reputation is %reputation% stars.";
-        private final String playerNotFound = "Player %player% not found.";
-        private final String cannotStartDialogAlreadyInDialog = "Cannot start dialog: you or this player is already in another dialog.";
-        private final String currentReputation = "Your current reputation is %reputation% stars.";
+        private final String newReport = "§c🔔 §7New report from §b%player%§7: §c%question%";
+        private final String cannotTakeOwnReport = "§c✗ §7You cannot take your own report.";
+        private final String noReports = "§e✓ §7There are currently no reports.";
+        private final String reportClosed = "§a✓ §7The report from §b%player% §7has been closed.";
+        private final String reportTaken = "§a✓ §7You have taken the report from §b%player%§7.";
+        private final String reportTakenByOtherAdmin = "§e⚠ §7%admin% §7has taken the report from §b%player%§7.";
+        private final String receivedReputation = "§6✦ §7You have received §e%stars% stars §7from §b%player%§7. Your reputation is now §b%reputation% stars§7.";
+        private final String playerNotFound = "§c✗ §7Player §b%player% §7not found.";
+        private final String cannotStartDialogAlreadyInDialog = "§c✗ §7Cannot start dialog: you or this player is already in another dialog.";
+        private final String currentReputation = "§b⭐ §7Your current reputation is §e%reputation% stars§7.";
     }
 
     @Getter
     @ConfigSerializable
     public static class ChatMessages {
-        private final String adminMessageFormat = "[Admin] %player%: %message%";
-        private final String playerMessageFormat = "[Player] %player%: %message%";
+        private final String adminMessageFormat = "§6[Admin] §b%player%§7: §f%message%";
+        private final String playerMessageFormat = "§b[Player] §b%player%§7: §f%message%";
     }
 
     @Getter
     @ConfigSerializable
     public static class UsageMessages {
         @Setting("report")
-        private final String reportUsage = "Usage: /report <question>";
+        private final String reportUsage = "§e/report §7<§bquestion§7>";
 
         @Setting("reports")
-        private final String reportsUsage = "Usage: /reports";
+        private final String reportsUsage = "§e/reports";
 
         @Setting("reputation")
-        private final String reputationUsage = "Usage: /reputation [player]";
+        private final String reputationUsage = "§e/reputation §7[§bplayer§7]";
     }
 }

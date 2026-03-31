@@ -2,7 +2,8 @@ package me.fortibrine.justreports.config;
 
 import lombok.Getter;
 import me.fortibrine.justreports.config.provider.MessagesConfigProvider;
-import me.fortibrine.justreports.gui.ReportListMenuConfig;
+import me.fortibrine.justreports.gui.config.FeedbackRatingMenuConfig;
+import me.fortibrine.justreports.gui.config.ReportListMenuConfig;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
 import org.spongepowered.configurate.yaml.NodeStyle;
@@ -22,19 +23,26 @@ public class ConfigManager {
     private final File reportListMenuConfigFile;
     private final ConfigurationLoader<?> reportListMenuConfigLoader;
 
+    private final File feedbackRatingMenuConfigFile;
+    private final ConfigurationLoader<?> feedbackRatingMenuConfigLoader;
+
     @Getter
     private MainConfig mainConfig;
 
     @Getter
-    private MessagesConfigProvider messagesConfigProvider;
+    private final MessagesConfigProvider messagesConfigProvider = new MessagesConfigProvider();
 
     @Getter
     private ReportListMenuConfig reportListMenuConfig;
+
+    @Getter
+    private FeedbackRatingMenuConfig feedbackRatingMenuConfig;
 
     public ConfigManager(File dataFolder) throws IOException {
         mainConfigFile = new File(dataFolder, "config.yml");
         messageConfigFile = new File(dataFolder, "messages.yml");
         reportListMenuConfigFile = new File(dataFolder, "menu/report_list.yml");
+        feedbackRatingMenuConfigFile = new File(dataFolder, "menu/feedback_rating.yml");
 
         int indent = 2;
 
@@ -52,6 +60,12 @@ public class ConfigManager {
 
         reportListMenuConfigLoader = YamlConfigurationLoader.builder()
                 .path(reportListMenuConfigFile.toPath())
+                .nodeStyle(NodeStyle.BLOCK)
+                .indent(indent)
+                .build();
+
+        feedbackRatingMenuConfigLoader = YamlConfigurationLoader.builder()
+                .path(feedbackRatingMenuConfigFile.toPath())
                 .nodeStyle(NodeStyle.BLOCK)
                 .indent(indent)
                 .build();
@@ -84,6 +98,13 @@ public class ConfigManager {
             reportListMenuConfigLoader.save(reportListMenuConfigRoot);
         }
 
+        // menu/feedback_rating.yml
+        ConfigurationNode feedbackRatingMenuConfigRoot = feedbackRatingMenuConfigLoader.load();
+        feedbackRatingMenuConfig = feedbackRatingMenuConfigRoot.get(FeedbackRatingMenuConfig.class, new FeedbackRatingMenuConfig());
+        if (!feedbackRatingMenuConfigFile.exists()) {
+            feedbackRatingMenuConfigRoot.set(FeedbackRatingMenuConfig.class, feedbackRatingMenuConfig);
+            feedbackRatingMenuConfigLoader.save(feedbackRatingMenuConfigRoot);
+        }
     }
 
 }

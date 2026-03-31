@@ -39,7 +39,12 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public void removeQuestion(Player player) {
-        questions.remove(player.getUniqueId());
+        removeQuestion(player.getUniqueId());
+    }
+
+    @Override
+    public void removeQuestion(UUID playerId) {
+        questions.remove(playerId);
     }
 
     @Override
@@ -50,11 +55,6 @@ public class QuestionServiceImpl implements QuestionService {
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
         }
-    }
-
-    @Override
-    public void closeQuestion(Player player) {
-        removeQuestion(player);
     }
 
     @Override

@@ -15,14 +15,18 @@ import me.fortibrine.justreports.config.ConfigManager;
 import me.fortibrine.justreports.config.MainConfig;
 import me.fortibrine.justreports.config.provider.MessagesConfigProvider;
 import me.fortibrine.justreports.database.JdbcConnectionFactory;
+import me.fortibrine.justreports.dialog.DialogHandler;
 import me.fortibrine.justreports.dialog.DialogService;
+import me.fortibrine.justreports.dialog.DialogServiceImpl;
 import me.fortibrine.justreports.gui.MenuFactory;
 import me.fortibrine.justreports.gui.handler.InventoryHandler;
+import me.fortibrine.justreports.handler.PlayerQuitHandler;
 import me.fortibrine.justreports.question.QuestionService;
 import me.fortibrine.justreports.question.QuestionServiceImpl;
 import me.fortibrine.justreports.reputation.ReputationService;
 import me.fortibrine.justreports.reputation.ReputationServiceImpl;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -72,16 +76,13 @@ public class JustReportsPlugin extends JavaPlugin {
             return;
         }
 
-        dialogService = new DialogService(messagesConfigProvider);
-        menuFactory = new MenuFactory(questionService, configManager, messagesConfigProvider);
+        dialogService = new DialogServiceImpl();
+        menuFactory = new MenuFactory(questionService, configManager, messagesConfigProvider, dialogService);
 
     }
 
     @Override
     public void onEnable() {
-
-        getServer().getPluginManager().registerEvents(dialogService, this);
-
         this.liteCommands = LiteBukkitFactory.builder(getDescription().getName().toLowerCase())
                 .commands(
                     new CommandReport(questionService, messagesConfigProvider),
@@ -93,8 +94,11 @@ public class JustReportsPlugin extends JavaPlugin {
                 .missingPermission(new PermissionHandler(messagesConfigProvider))
                 .build();
 
-        getServer().getPluginManager().registerEvents(new InventoryHandler(), this);
+        PluginManager pluginManager = getServer().getPluginManager();
 
+        pluginManager.registerEvents(new InventoryHandler(), this);
+        pluginManager.registerEvents(new DialogHandler(dialogService, messagesConfigProvider), this);
+        pluginManager.registerEvents(new PlayerQuitHandler(questionService, dialogService), this);
     }
 
     @Override
@@ -104,6 +108,11 @@ public class JustReportsPlugin extends JavaPlugin {
         questionService = null;
         reputationService = null;
         menuFactory = null;
+
+        if (messagesConfigProvider != null) {
+            messagesConfigProvider.setConfig(null);
+            messagesConfigProvider = null;
+        }
 
         if (this.liteCommands != null) {
             this.liteCommands.unregister();
