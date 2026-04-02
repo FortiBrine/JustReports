@@ -1,6 +1,6 @@
 # JustReports
 
-A lightweight **Paper/Spigot** plugin that connects players and staff through an in-game report flow: players submit a question via `/report`, staff review it via `/reports`, and then respond in a guided dialog.
+A lightweight **Paper/Spigot** plugin for player ↔ staff communication: players submit a **question** via `/report`, staff open `/reports` to pick it up, and both sides continue in a guided in-game dialog until it’s closed.
 
 ## Table of Contents
 
@@ -10,7 +10,7 @@ A lightweight **Paper/Spigot** plugin that connects players and staff through an
 - [Usage](#usage)
   - [Player Commands](#player-commands)
   - [Staff Commands](#staff-commands)
-  - [Typical Flow](#typical-flow)
+  - [Typical Q&A Flow](#typical-qa-flow)
 - [Configuration](#configuration)
   - [`config.yml` (database)](#configyml-database)
   - [`messages.yml`](#messagesyml)
@@ -22,12 +22,12 @@ A lightweight **Paper/Spigot** plugin that connects players and staff through an
 
 ## Features
 
-- Player command to submit a report/question: `/report <question>`
-- Staff UI to browse incoming reports: `/reports`
-- Report assignment (so two staff members don’t answer the same report at the same time)
+- Players ask staff a question: `/report <question>`
+- Staff view and pick up incoming questions in a GUI: `/reports`
+- “Take/assign” logic so the same question isn’t answered by multiple staff members
 - Staff ↔ player dialog messaging with configurable chat formats
 - Simple reputation command: `/reputation [player]`
-- Reload command to re-read configs without a restart: `/justreports reload`
+- Reload config files without restart: `/justreports reload`
 - Config files are generated on first start
 
 ## Supported Platforms
@@ -53,22 +53,23 @@ On first start, the plugin will generate:
 
 ### Player Commands
 
-- `/report <question>` — sends a report to online admins.
+- `/report <question>` — sends your question to online staff.
 
 ### Staff Commands
 
-- `/reports` — opens the report list menu.
+- `/reports` — opens the question/report list menu.
 - `/reputation` — shows your reputation.
 - `/reputation <player>` — shows another player’s reputation.
 - `/justreports reload` — reloads config files.
 
-### Typical Flow
+### Typical Q&A Flow
 
 1. A player uses `/report <question>`.
-2. Online admins receive a notification message.
-3. A staff member opens `/reports`, selects a report, and starts a dialog.
-4. The player and admin communicate until the report is closed.
-5. Optionally, reputation/stars can be given as feedback (menu-driven).
+2. Online admins receive a “new question” notification.
+3. A staff member opens `/reports`, selects the question, and takes it.
+4. A dialog starts: the player and staff member exchange messages.
+5. The staff member closes the dialog when the question is resolved.
+6. Optionally, the player can leave a star rating (reputation).
 
 ## Configuration
 
@@ -88,8 +89,8 @@ Key settings (see `MainConfig.DatabaseConfig`):
 
 All user-facing messages are configurable, including:
 
-- player messages (e.g. “report sent”, “already sent a report”)
-- admin messages (e.g. “new report from …”)
+- player messages (e.g. “question sent”, “already sent a question”)
+- admin messages (e.g. “new question from …”)
 - dialog chat formats
 - command usage strings
 
@@ -99,7 +100,7 @@ Color codes use the standard Minecraft `§` format.
 
 The plugin uses menu configuration files under `plugins/JustReports/menu/`:
 
-- `report_list.yml` — how the report list GUI looks
+- `report_list.yml` — how the question list GUI looks
 - `feedback_rating.yml` — how the feedback/reputation GUI looks
 
 ## Permissions
@@ -108,10 +109,10 @@ Defined in `plugin.yml`:
 
 | Permission | Default | Description |
 |---|---:|---|
-| `justreports.report` | true | Allows sending a report via `/report` |
-| `justreports.reports` | op | Allows opening the report list menu via `/reports` |
-| `justreports.reports.answer` | op | Allows answering/taking reports (used internally by staff actions) |
-| `justreports.see` | op | Allows seeing reports (used by staff UI) |
+| `justreports.report` | true | Allows asking a question via `/report` |
+| `justreports.reports` | op | Allows opening the list GUI via `/reports` |
+| `justreports.reports.answer` | op | Allows answering/taking questions (used internally by staff actions) |
+| `justreports.see` | op | Allows seeing incoming questions (used by staff UI) |
 | `justreports.reputation` | op | Allows `/reputation` |
 | `justreports.reputation.other` | op | Allows `/reputation <player>` |
 | `justreports.reload` | op | Allows `/justreports reload` |
@@ -147,4 +148,3 @@ If you’re changing commands/messages/config, please keep backward compatibilit
 ## License
 
 See [LICENSE](LICENSE).
-
