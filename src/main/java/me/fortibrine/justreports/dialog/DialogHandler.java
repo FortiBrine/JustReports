@@ -23,6 +23,7 @@ public class DialogHandler implements Listener {
 
         if (!dialogOpt.isPresent()) return;
         Dialog dialog = dialogOpt.get();
+        event.setCancelled(true);
 
         MessagesConfig.ChatMessages chatMessages = messagesConfigProvider.getConfig().getChat();
 

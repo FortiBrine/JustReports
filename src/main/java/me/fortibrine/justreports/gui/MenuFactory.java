@@ -25,7 +25,8 @@ public class MenuFactory {
                 questionService,
                 messagesConfigProvider,
                 configManager.getReportListMenuConfig(),
-                dialogService
+                dialogService,
+                this
         ).open(0);
     }
 
@@ -34,6 +35,7 @@ public class MenuFactory {
                 player,
                 targetPlayerId,
                 reputationService,
+                messagesConfigProvider,
                 configManager.getFeedbackRatingMenuConfig()
         ).open();
     }

@@ -2,6 +2,7 @@ package me.fortibrine.justreports.gui.handler;
 
 import me.fortibrine.justreports.gui.FeedbackRatingMenu;
 import me.fortibrine.justreports.gui.ReportListMenu;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -18,6 +19,9 @@ public class InventoryHandler implements Listener {
 
         InventoryHolder holder = inventory.getHolder();
         if (holder == null) return;
+
+        if (event.getCurrentItem() == null) return;
+        if (event.getCurrentItem().getType() == Material.AIR) return;
 
         if (holder instanceof ReportListMenu) {
             event.setCancelled(true);
@@ -41,11 +45,7 @@ public class InventoryHandler implements Listener {
         InventoryHolder holder = inventory.getHolder();
         if (holder == null) return;
 
-        if (holder instanceof ReportListMenu) {
-            event.setCancelled(true);
-        }
-
-        if (holder instanceof FeedbackRatingMenu) {
+        if (holder instanceof ReportListMenu || holder instanceof FeedbackRatingMenu) {
             event.setCancelled(true);
         }
     }

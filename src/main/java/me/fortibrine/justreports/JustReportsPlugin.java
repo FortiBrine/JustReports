@@ -77,7 +77,7 @@ public class JustReportsPlugin extends JavaPlugin {
         }
 
         dialogService = new DialogServiceImpl();
-        menuFactory = new MenuFactory(questionService, configManager, messagesConfigProvider, dialogService);
+        menuFactory = new MenuFactory(questionService, configManager, messagesConfigProvider, dialogService, reputationService);
 
     }
 
@@ -98,7 +98,7 @@ public class JustReportsPlugin extends JavaPlugin {
 
         pluginManager.registerEvents(new InventoryHandler(), this);
         pluginManager.registerEvents(new DialogHandler(dialogService, messagesConfigProvider), this);
-        pluginManager.registerEvents(new PlayerQuitHandler(questionService, dialogService), this);
+        pluginManager.registerEvents(new PlayerQuitHandler(questionService, dialogService, messagesConfigProvider, menuFactory), this);
     }
 
     @Override

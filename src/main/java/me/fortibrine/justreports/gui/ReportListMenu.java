@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class ReportListMenu implements InventoryHolder {
-
     private final Player player;
     private final QuestionService questionService;
     private final MessagesConfigProvider messagesConfigProvider;
     private final ReportListMenuConfig config;
     private final DialogService dialogService;
+    private final MenuFactory menuFactory;
 
     private int page;
     private int[] questionSlots;
@@ -138,7 +138,6 @@ public class ReportListMenu implements InventoryHolder {
 
             Player targetPlayer = Bukkit.getPlayer(entry.getKey());
             if (targetPlayer == null) {
-                index++;
                 continue;
             }
 
@@ -173,7 +172,7 @@ public class ReportListMenu implements InventoryHolder {
         String line = config.getHologram()[row];
         if (col >= line.length()) return;
 
-        char c = line.replace(' ', (char) 0).charAt(col);
+        char c = line.replace(" ", "").charAt(col);
 
         ItemConfig itemConfig = config.getItems().get(c);
         if (itemConfig == null) return;
@@ -199,12 +198,15 @@ public class ReportListMenu implements InventoryHolder {
                 UUID targetPlayerId = getQuestionAtSlot(slot);
 
                 if (targetPlayerId == null) {
+                    player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getPlayerNotFound()
+                            .replace("%player%", targetPlayerId.toString()));
                     continue;
                 }
 
                 Player targetPlayer = Bukkit.getPlayer(targetPlayerId);
-                if (targetPlayer != null) {
-                    questionService.removeQuestion(targetPlayerId);
+                if (targetPlayer == null) {
+                    player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getPlayerNotFound()
+                            .replace("%player%", targetPlayerId.toString()));
                     continue;
                 }
 
@@ -213,12 +215,15 @@ public class ReportListMenu implements InventoryHolder {
                 UUID targetPlayerId = getQuestionAtSlot(slot);
 
                 if (targetPlayerId == null) {
+                    player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getPlayerNotFound()
+                            .replace("%player%", targetPlayerId.toString()));
                     continue;
                 }
 
                 Player targetPlayer = Bukkit.getPlayer(targetPlayerId);
                 if (targetPlayer == null) {
-                    questionService.removeQuestion(targetPlayerId);
+                    player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getPlayerNotFound()
+                            .replace("%player%", targetPlayerId.toString()));
                     continue;
                 }
 
@@ -238,21 +243,53 @@ public class ReportListMenu implements InventoryHolder {
     }
 
     public UUID getQuestionAtSlot(int slot) {
-        int index = Arrays.binarySearch(questionSlots, slot);
+        int index = -1;
+        for (int i = 0; i < questionSlots.length; i++) {
+            if (questionSlots[i] == slot) {
+                index = i;
+                break;
+            }
+        }
+
         if (index < 0) return null;
 
-        List<UUID> questionIds = new ArrayList<>(pageQuestions.keySet());
+        List<UUID> questionIds = pageQuestions.keySet().stream()
+                .filter(uuid -> Bukkit.getPlayer(uuid) != null)
+                .collect(Collectors.toList());
+
         if (index >= questionIds.size()) return null;
 
         return questionIds.get(index);
     }
 
     public void handleTakeQuestion(Player targetPlayer) {
+        if (dialogService.isInDialog(targetPlayer.getUniqueId())
+                || dialogService.isInDialog(player.getUniqueId())) {
+            player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getCannotStartDialogAlreadyInDialog());
+            return;
+        }
 
+        if (targetPlayer.getUniqueId().equals(player.getUniqueId())) {
+            player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getCannotTakeOwnReport());
+            return;
+        }
+
+        dialogService.beginDialog(targetPlayer.getUniqueId(), player.getUniqueId());
+        player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getReportTaken()
+                .replace("%player%", targetPlayer.getName()));
+        targetPlayer.sendMessage(messagesConfigProvider.getConfig().getPlayer().getReportTakenByAdmin()
+                .replace("%admin%", player.getName()));
     }
 
     public void handleCloseQuestion(Player targetPlayer) {
+        questionService.removeQuestion(targetPlayer);
+        dialogService.endDialog(targetPlayer.getUniqueId());
+        if (!player.getUniqueId().equals(targetPlayer.getUniqueId())) {
+            menuFactory.openFeedbackRatingMenu(targetPlayer, player.getUniqueId());
+        }
 
+        player.sendMessage(messagesConfigProvider.getConfig().getAdmin().getReportClosed()
+                .replace("%player%", targetPlayer.getName()));
     }
 
 }

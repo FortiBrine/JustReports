@@ -28,6 +28,7 @@ public class CommandReputation {
     public void execute(@Context Player sender) {
         double reputation = reputationService.getReputation(sender);
         String message = messagesConfigProvider.getConfig().getPlayer().getOtherPlayerReputation()
+                .replace("%player%", sender.getName())
                 .replace("%reputation%", String.format("%.2f", reputation));
         sender.sendMessage(message);
     }

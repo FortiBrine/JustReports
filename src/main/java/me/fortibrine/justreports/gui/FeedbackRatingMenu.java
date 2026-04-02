@@ -2,6 +2,7 @@ package me.fortibrine.justreports.gui;
 
 import lombok.RequiredArgsConstructor;
 import me.fortibrine.justreports.config.ItemConfig;
+import me.fortibrine.justreports.config.provider.MessagesConfigProvider;
 import me.fortibrine.justreports.gui.config.FeedbackRatingMenuConfig;
 import me.fortibrine.justreports.reputation.ReputationService;
 import org.bukkit.Bukkit;
@@ -16,12 +17,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
 public class FeedbackRatingMenu implements InventoryHolder {
     private final Player player;
     private final UUID targetPlayerId;
     private final ReputationService reputationService;
+    private final MessagesConfigProvider messagesConfigProvider;
     private final FeedbackRatingMenuConfig config;
 
     private Inventory inventory;
@@ -65,8 +68,7 @@ public class FeedbackRatingMenu implements InventoryHolder {
                 itemMeta.setLore(Arrays.asList(itemConfig.getLore()));
 
                 itemStack.setItemMeta(itemMeta);
-                inventory.setItem(slot, itemStack);
-                slot++;
+                inventory.setItem(slot++, itemStack);
             }
         }
     }
@@ -87,7 +89,7 @@ public class FeedbackRatingMenu implements InventoryHolder {
         String line = config.getHologram()[row];
         if (col >= line.length()) return;
 
-        char c = line.replace(' ', (char) 0).charAt(col);
+        char c = line.replace(" ", "").charAt(col);
 
         ItemConfig itemConfig = config.getItems().get(c);
         if (itemConfig == null) return;
@@ -113,7 +115,18 @@ public class FeedbackRatingMenu implements InventoryHolder {
                     continue;
                 }
 
-                reputationService.addReputationByUniqueId(targetPlayerId, rating);
+                CompletableFuture.runAsync(() -> {
+                    reputationService.addReputationByUniqueId(targetPlayerId, rating);
+                    String currentReputation = String.format("%.2f", reputationService.getReputationByUniqueId(targetPlayerId));
+                    Player targetPlayer = Bukkit.getPlayer(targetPlayerId);
+                    if (targetPlayer != null) {
+                        targetPlayer.sendMessage(messagesConfigProvider.getConfig().getAdmin().getReceivedReputation()
+                                .replace("%stars%", String.valueOf(rating))
+                                .replace("%player%", player.getName())
+                                .replace("%reputation%", currentReputation));
+                    }
+                });
+
                 player.closeInventory();
             }
         }

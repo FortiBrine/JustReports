@@ -42,6 +42,8 @@ public class MessagesConfig {
     public static class ChatMessages {
         private final String adminMessageFormat = "§6[Admin] §b%player%§7: §f%message%";
         private final String playerMessageFormat = "§b[Player] §b%player%§7: §f%message%";
+        private final String adminQuit = "§c⚠ §7Admin §b%admin% §7has left during the dialog.";
+        private final String playerQuit = "§c⚠ §7Player §b%player% §7has left during the dialog.";
     }
 
     @Getter

@@ -1,8 +1,10 @@
 package me.fortibrine.justreports.handler;
 
 import lombok.RequiredArgsConstructor;
+import me.fortibrine.justreports.config.provider.MessagesConfigProvider;
 import me.fortibrine.justreports.dialog.Dialog;
 import me.fortibrine.justreports.dialog.DialogService;
+import me.fortibrine.justreports.gui.MenuFactory;
 import me.fortibrine.justreports.question.QuestionService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -16,6 +18,8 @@ import java.util.Optional;
 public class PlayerQuitHandler implements Listener {
     private final QuestionService questionService;
     private final DialogService dialogService;
+    private final MessagesConfigProvider messagesConfigProvider;
+    private final MenuFactory menuFactory;
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
@@ -36,7 +40,16 @@ public class PlayerQuitHandler implements Listener {
                 return;
             }
 
-            // reputation business logic
+            String message = messagesConfigProvider.getConfig().getChat().getAdminQuit()
+                    .replace("%admin%", admin.getName());
+            target.sendMessage(message);
+            dialogService.endDialog(target.getUniqueId());
+            questionService.removeQuestion(target);
+
+            menuFactory.openFeedbackRatingMenu(
+                    target,
+                    admin.getUniqueId()
+            );
 
             return;
         }
@@ -49,7 +62,11 @@ public class PlayerQuitHandler implements Listener {
             return;
         }
 
-        // notify admin that player has quit during dialog
+        String message = messagesConfigProvider.getConfig().getChat().getPlayerQuit()
+                .replace("%player%", target.getName());
+        admin.sendMessage(message);
 
+        questionService.removeQuestion(target);
+        dialogService.endDialog(admin.getUniqueId());
     }
 }
